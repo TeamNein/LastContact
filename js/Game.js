@@ -130,7 +130,7 @@ TopDownGame.Game.prototype = {
         }
 
         // arcade.collide for barrier Object 
-        // this.game.physics.arcade.overlap(this.player, this.items, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
     },
 
