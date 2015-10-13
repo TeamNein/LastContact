@@ -6,7 +6,7 @@ TopDownGame.Game = function(){};
 TopDownGame.Game.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1');
+        this.map = this.game.add.tilemap('level1-5');
         var sky = this.game.add.image(0, 0, 'Background');
 
         // Arguments: tileset name as specified in Tiled
@@ -23,6 +23,9 @@ TopDownGame.Game.prototype = {
         this.blockedLayer.resizeWorld();
 
         this.createKey();
+ 
+        this.createAlien();
+
         // this.createDoors();    
 
         // Create player
@@ -42,13 +45,33 @@ TopDownGame.Game.prototype = {
         this.player.body.gravity.y = 500;
         this.player.body.collideWorldBounds = true;
 
+        //this.player.hits = 0; 
+
+        this.player.health = 100; 
+        //this.player.alive = true; 
+
         // Makes the camera follow the player in the world
         this.game.camera.follow(this.player);
 
         // Move player with cursor keys
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
+        //create bullets to shoot
+        bullets = this.game.add.group(); 
+        bullets.enableBody = true; 
+        //bullets.physicsBodyType = Phaser.Physics.ARCADE; 
+
+        this.game.physics.enable(bullets, Phaser.Physics.ARCADE); 
+
+        bullets.createMultiple(40, 'bullet');
+        bullets.setAll('checkWorldBounds', true);
+        bullets.setAll('outOfBoundsKill', true);
+
+      
+
     },
+    
+
     createKey: function() {
         // Create keys the player can pick up
         this.keys = this.game.add.group();
@@ -60,6 +83,29 @@ TopDownGame.Game.prototype = {
           this.createFromTiledObject(element, this.keys);
         }, this);
     },
+
+    createAlien: function () {
+
+        this.enemies = this.game.add.group();
+
+        var result = this.findObjectsByType('alien', this.map, 'Objects');
+
+        //loop through array of found aliens in tilemap 
+        var index; 
+        for(index = 0; index < result.length; index++){
+            this.alien = this.game.add.sprite(result[index].x, result[index].y, 'alien');
+            this.alien.scale.setTo(.10, .10);
+            this.alien.enableBody = true; 
+            this.game.physics.arcade.enable(this.alien);
+            this.alien.body.collideWorldBounds = true;
+            this.game.physics.arcade.collide(this.alien, this.blockedLayer);
+            this.alien.body.gravity.y = 25;
+            this.alien.body.velocity.x = 10; 
+            this.alien.startPosX = this.alien.x; 
+            this.enemies.add(this.alien); 
+        }
+    },
+    
     createDoors: function() {
         //create doors
         this.doors = this.game.add.group();
@@ -97,7 +143,8 @@ TopDownGame.Game.prototype = {
 
     update: function() {
         // Handle collision
-        this.game.physics.arcade.collide(this.player, this.blockedLayer);
+        this.game.physics.arcade.collide(this.player, this.blockedLayer);  
+        this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
 
         this.player.body.velocity.x = 0;
 
@@ -130,8 +177,46 @@ TopDownGame.Game.prototype = {
         }
 
         // arcade.collide for barrier Object 
-        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.keys, this.enemies, this.collect, null, this);
         // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
+
+
+        this.enemies.forEach(function(alien){        
+             if((alien.body.velocity.x > 0 && alien.x > alien.startPosX + 20) || 
+
+                (alien.body.velocity.x < 0 && alien.x < alien.startPosX - 20)) {
+
+                    alien.body.velocity.x *= -1; 
+
+                    var bullet = bullets.getFirstExists(false);
+
+                    if (bullet)
+                    {
+                        bullet.reset(alien.x, alien.y);
+                        bullet.enableBody = true; 
+                        //multiply by sign of alien x velcity to send in correct direction 
+                        bullet.body.velocity.x = (alien.body.velocity.x/alien.body.velocity.x) * 250; 
+                        bullet.scale.set(.05, .05);
+                    }
+
+                } 
+        }); 
+
+        //could change to colllide instead of overlap         
+        if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
+            this.player.damage(1);   
+            //move it backwards so it doesn't get hit again... this sort of sucks
+            this.player.x = this.player.x - 5; 
+            //for dubugging
+            console.log('hit!' + this.player.health); 
+        }
+
+        if (this.game.physics.arcade.collide(this.player, this.bullets, null, null, this.game)) {
+            this.player.damage(1);
+            //for debugging
+            console.log('hit!' + this.player.health);
+        }
+
     },
 
     collect: function(player, collectable) {
@@ -142,4 +227,11 @@ TopDownGame.Game.prototype = {
     enterDoor: function(player, door) {
         console.log('entering door that will take you to '+door.targetTilemap+' on x:'+door.targetX+' and y:'+door.targetY);
     },
-};
+  
+
+};    
+
+
+
+
+
