@@ -206,14 +206,15 @@ TopDownGame.Game.prototype = {
         if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
             this.player.damage(1);   
             //move it backwards so it doesn't get hit again... this sort of sucks
-            this.player.x = this.player.x - 5; 
+            this.player.x = this.player.x-5;   
             //for dubugging
             console.log('hit!' + this.player.health); 
         }
 
-        if (this.game.physics.arcade.collide(this.player, this.bullets, null, null, this.game)) {
+        if (this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) {
             this.player.damage(1);
             //for debugging
+           bullets.destroy();
             console.log('hit!' + this.player.health);
         }
 
