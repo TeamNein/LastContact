@@ -20,7 +20,10 @@ TopDownGame.Preload.prototype = {
         this.load.image('Background', 'assets/images/starBG.jpg');
         
         this.load.image('bullet', 'assets/images/bullet.png');
+        this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+
         },
+        
         create: function() {
         this.state.start('Game');
     }
