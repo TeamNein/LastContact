@@ -68,9 +68,11 @@ TopDownGame.Game.prototype = {
         bullets.setAll('checkWorldBounds', true);
         bullets.setAll('outOfBoundsKill', true);
 
-        var text = this.game.add.text(0, 1000, "lives left: " + this.player.health);
+        var text = this.game.add.text(650, 50, "lives left: " + this.player.health);
         text.font = 'Revalia';
-        text.fill = "#00FF00"; 
+        text.fill = "#00FF00";
+        text.fixedToCamera = true; 
+        text.cameraOffset.setTo(650, 50); 
         text.fontSize = 20;
 
     },
@@ -181,7 +183,7 @@ TopDownGame.Game.prototype = {
         }
 
         // arcade.collide for barrier Object 
-        this.game.physics.arcade.overlap(this.player, this.keys, this.enemies, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
 
 
@@ -210,8 +212,10 @@ TopDownGame.Game.prototype = {
         if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
             this.player.damage(1);   
             //move it backwards so it doesn't get hit again... this sort of sucks
-            this.player.x = 0;
-            this.player.y = 1000;    
+            //this.player.x = 0;
+            //this.player.y = 1000;  
+
+            this.player.body.velocity.y = -350;  
             //for dubugging
             console.log('Alien hit! You have ' + this.player.health + ' lives left'); 
         }
@@ -219,8 +223,9 @@ TopDownGame.Game.prototype = {
 
         if (this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) {
             this.player.damage(1);
-            this.player.x = 0; 
-            this.player.y = 1050; 
+            //this.player.x = 0; 
+            //this.player.y = 1050; 
+             this.player.body.velocity.y = -350; 
             //for debugging
             //bullets.remove();
             console.log('Bullet hit! You have '  + this.player.health + ' lives left' );
