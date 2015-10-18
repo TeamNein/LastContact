@@ -182,8 +182,8 @@ TopDownGame.Game.prototype = {
         this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         this.game.physics.arcade.overlap(this.player, this.enemies, this.PlayerEnemyOverlap, null, this);
-        this.game.physics.arcade.overlap(this.player, bullets, this.PlayerEnemyOverlap, null, this);
-        this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerEnemyOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bullets, this.PlayerBulletOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerBulletOverlap, null, this);
 
 
         this.player.body.velocity.x *= .1;
@@ -270,6 +270,20 @@ TopDownGame.Game.prototype = {
                 text.setText("LIVES: " + mplayer.health); 
         }
     },
+
+    PlayerBulletOverlap: function(mplayer, bullet){
+         if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
+                bullet.kill();
+             
+                console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+                text.setText("LIVES: " + mplayer.health); 
+        }
+    },
+
+
     PlayerToxicOverlap: function(mplayer, enemy){
     
         this.player.damage(1);
