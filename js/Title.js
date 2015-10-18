@@ -24,14 +24,14 @@ TopDownGame.Title.prototype = {
         ship.scale.setTo(.5, .5);
         this.game.physics.arcade.enable(ship);
         ship.body.velocity.x = 50; 
-      
+        this.game.input.onTap.addOnce(this.start,this);
     },
 
  	update: function() {
-    		 if (this.cursors.left.isDown) {
-    		 		this.state.start('Game'); 
-    		 }
 
     },
+    start: function() {
+        this.state.start("Game");
+    }
 
 };

@@ -4,6 +4,10 @@ var TopDownGame = TopDownGame || {};
 
 //to update text for player lives 
 var text; 
+var player_invinsible_time = 2;
+var player_is_invinsible = false;
+var jump_velocity = 350;
+var x_velocity = 150;
 
 TopDownGame.Game = function(){};
 
@@ -19,9 +23,11 @@ TopDownGame.Game.prototype = {
 
         // Create layer
         this.blockedLayer = this.map.createLayer('TileLayer');
+        this.toxicLayer = this.map.createLayer('ToxicLiquidLayer');
 
         //collision on blockedLayer
         this.map.setCollisionBetween(0, 2000, true, 'TileLayer');
+        this.map.setCollisionBetween(400, 405, true, 'ToxicLiquidLayer');
 
         // Resize the game world to match the layer dimensions
         this.blockedLayer.resizeWorld();
@@ -30,7 +36,8 @@ TopDownGame.Game.prototype = {
  
         this.createAlien();
 
-        // this.createDoors();    
+        this.createStartDoors();
+        this.createFinishDoors();
 
         // Create player
         var result = this.findObjectsByType('playerStart', this.map, 'Objects')
@@ -49,11 +56,9 @@ TopDownGame.Game.prototype = {
         this.player.body.gravity.y = 500;
         this.player.body.collideWorldBounds = true;
 
-        //this.player.hits = 0; 
 
         //give the player 5 lives, lost when hit alien/bullet
         this.player.health = 5; 
-        //this.player.alive = true; 
 
         // Makes the camera follow the player in the world
         this.game.camera.follow(this.player);
@@ -64,15 +69,12 @@ TopDownGame.Game.prototype = {
         //create bullets to shoot
         bullets = this.game.add.group(); 
         bullets.enableBody = true; 
-        //bullets.physicsBodyType = Phaser.Physics.ARCADE; 
 
         this.game.physics.enable(bullets, Phaser.Physics.ARCADE); 
 
         bullets.createMultiple(40, 'bullet');
         bullets.setAll('checkWorldBounds', true);
         bullets.setAll('outOfBoundsKill', true);
-
-
 
         bulletsreversed = this.game.add.group(); 
         bulletsreversed.enableBody = true; 
@@ -125,14 +127,25 @@ TopDownGame.Game.prototype = {
         }
     },
     
-    createDoors: function() {
+    createStartDoors: function() {
         //create doors
-        this.doors = this.game.add.group();
-        this.doors.enableBody = true;
-
-        result = this.findObjectsByType('door', this.map, 'Objects');
+        this.startDoors = this.game.add.group();
+        this.startDoors.enableBody = true;
+        var startdoor; 
+        result = this.findObjectsByType('startdoor', this.map, 'Objects');
         result.forEach(function(element){
-          this.createFromTiledObject(element, this.doors);
+          this.createFromTiledObject(element, this.startDoors);
+        }, this);
+    },
+    createFinishDoors: function() {
+        //create doors
+        this.finishDoors = this.game.add.group();
+        this.finishDoors.enableBody = true;
+        var finishdoor;
+        result = this.findObjectsByType('finishdoor', this.map, 'Objects');
+        result.forEach(function(element){
+            console.log(element.x + " and " + element.y);
+          this.createFromTiledObject(element, this.finishDoors);
         }, this);
     },
 
@@ -153,8 +166,9 @@ TopDownGame.Game.prototype = {
     // Create a sprite from an object
     createFromTiledObject: function(element, group) {
         var sprite = group.create(element.x, element.y, element.properties.sprite);
-
         // Copy all properties to the sprite
+                    console.log(element);
+
         Object.keys(element.properties).forEach(function(key){
             sprite[key] = element.properties[key];
         });
@@ -164,20 +178,26 @@ TopDownGame.Game.prototype = {
         // Handle collision
         this.game.physics.arcade.collide(this.player, this.blockedLayer);  
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
+        this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.enemies, this.PlayerEnemyOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bullets, this.PlayerEnemyOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerEnemyOverlap, null, this);
 
-        this.player.body.velocity.x = 0;
+
+        this.player.body.velocity.x *= .1;
 
         if (this.cursors.left.isDown)
         {
             // Move to the left
-            this.player.body.velocity.x = -150;
+            this.player.body.velocity.x = -x_velocity;
 
             this.player.animations.play('left');
         }
         else if (this.cursors.right.isDown)
         {
             // Move to the right
-            this.player.body.velocity.x = 150;
+            this.player.body.velocity.x = x_velocity;
 
             this.player.animations.play('right');
         }
@@ -192,13 +212,8 @@ TopDownGame.Game.prototype = {
         //  Allow the player to jump if they are touching the ground.
         if (this.cursors.up.isDown && this.player.body.blocked.down)
         {
-            this.player.body.velocity.y = -350;
+            this.player.body.velocity.y = -jump_velocity;
         }
-
-        // arcade.collide for barrier Object 
-        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
-        // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
-
 
         this.enemies.forEach(function(alien){      
 
@@ -210,7 +225,6 @@ TopDownGame.Game.prototype = {
                 if (bullet)
                     {
                         bullet.reset(alien.x, alien.y);
-                        //bullet.enableBody = true; 
                         bullet.body.velocity.x = 250; 
                         bullet.scale.set(.05, .05);
                     }
@@ -230,51 +244,45 @@ TopDownGame.Game.prototype = {
                         bullet.scale.set(.05, .05);
                     }
              }
-        }); 
-
-        //could change to colllide instead of overlap         
-        if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
-            if(!this.player.invincible) {
-                this.player.damage(1);   
-                this.toggleInvincible(this.player); 
-                this.game.time.events.add(2000, this.toggleInvincible, this); 
-            }
-            
-            this.player.body.velocity.y = -350;  
-
-            console.log('Alien hit! You have ' + this.player.health + ' lives left'); 
-            text.setText("LIVES: " + this.player.health);
-        }
-
-
-        if ((this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) 
-             || (this.game.physics.arcade.collide(this.player, bulletsreversed, null, null, this.game)) )
-
-         {
-            if(!this.player.invincible) {
-                this.player.damage(1);   
-                this.toggleInvincible(this.player); 
-                this.game.time.events.add(2000, this.toggleInvincible, this); 
-            }
-
-            this.player.body.velocity.y = -350; 
-         
-            console.log('Bullet hit! You have '  + this.player.health + ' lives left' );
-            text.setText("LIVES: " + this.player.health); 
-
-        }
+        });
 
         if (this.player.health == 0 ) {
              this.state.start("Gameover");
         }
-     
-
     },
 
-    toggleInvincible: function (player) {
+    toggleInvincible: function (mplayer) {
         this.player.invincible = !this.player.invincible; 
     },
 
+
+    PlayerEnemyOverlap: function(mplayer, enemy){
+         if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
+            
+
+                mplayer.body.velocity.y = -jump_velocity; 
+             
+                console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+                text.setText("LIVES: " + mplayer.health); 
+        }
+    },
+    PlayerToxicOverlap: function(mplayer, enemy){
+    
+        this.player.damage(1);   
+            //this.toggleInvincible(this.player); 
+        //this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
+            
+
+        mplayer.body.velocity.y = -jump_velocity; 
+     
+        console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+        text.setText("LIVES: " + mplayer.health); 
+        
+    },
+   
     collect: function(player, collectable) {
         console.log('collected');
         // Remove sprite

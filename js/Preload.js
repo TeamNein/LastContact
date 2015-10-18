@@ -12,17 +12,19 @@ TopDownGame.Preload.prototype = {
 
         //for pregme screen
         this.load.image('ship', 'assets/images/ship2.png');
-        this.load.image('spacetitle', 'assets/images/spaceTitle.png');
+        this.load.image('spacetitle', 'assets/images/spaceTitle.jpg');
 
         //load game assets
-        this.load.tilemap('level1-6', 'assets/tilemaps/level1-6.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('level1-6', 'assets/tilemaps/level1-8.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('spacetiles', 'assets/images/tileset.png');
         this.load.image('key', 'assets/images/key.png');
         this.load.image('alien', 'assets/images/alienTest.png');
         this.load.spritesheet('astronaut', 'assets/images/astro_sheet.png', 38, 60);
         // // this.load.image('browndoor', 'assets/images/browndoor.png');
         this.load.image('Background', 'assets/images/starBG.jpg');
-        
+        this.load.image('startdoor', 'assets/images/door.png');
+        this.load.image('finishdoor', 'assets/images/doorend.jpg');
+
         this.load.image('bullet', 'assets/images/bullet.png');
         this.load.image('bulletreversed', 'assets/images/bulletreversed.png');
         this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -31,10 +33,6 @@ TopDownGame.Preload.prototype = {
         },
         
     create: function() {
-        //add title screen state 
-
         this.state.start('Title');
-
-        //this.state.start('Game');
     }
 };
