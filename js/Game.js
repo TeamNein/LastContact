@@ -210,13 +210,14 @@ TopDownGame.Game.prototype = {
                 if (bullet)
                     {
                         bullet.reset(alien.x, alien.y);
-                        bullet.enableBody = true; 
+                        //bullet.enableBody = true; 
                         bullet.body.velocity.x = 250; 
                         bullet.scale.set(.05, .05);
                     }
              }
 
              //so we can use a the reversed bullet sprite 
+             
              else if (alien.body.velocity.x < 0 && alien.x < alien.startPosX - 20) {
                 alien.body.velocity.x *= -1; 
                 var bullet = bulletsreversed.getFirstExists(false);
@@ -233,8 +234,12 @@ TopDownGame.Game.prototype = {
 
         //could change to colllide instead of overlap         
         if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
-            this.player.damage(1);   
-
+            if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(2000, this.toggleInvincible, this); 
+            }
+            
             this.player.body.velocity.y = -350;  
 
             console.log('Alien hit! You have ' + this.player.health + ' lives left'); 
@@ -246,7 +251,11 @@ TopDownGame.Game.prototype = {
              || (this.game.physics.arcade.collide(this.player, bulletsreversed, null, null, this.game)) )
 
          {
-            this.player.damage(1);
+            if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(2000, this.toggleInvincible, this); 
+            }
 
             this.player.body.velocity.y = -350; 
          
@@ -255,6 +264,15 @@ TopDownGame.Game.prototype = {
 
         }
 
+        if (this.player.health == 0 ) {
+             this.state.start("Gameover");
+        }
+     
+
+    },
+
+    toggleInvincible: function (player) {
+        this.player.invincible = !this.player.invincible; 
     },
 
     collect: function(player, collectable) {
