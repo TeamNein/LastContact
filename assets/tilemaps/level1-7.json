@@ -46,8 +46,8 @@
                  "type":"",
                  "visible":true,
                  "width":38,
-                 "x":5,
-                 "y":1166
+                 "x":14,
+                 "y":1159
                 }, 
                 {
                  "gid":1073745129,
@@ -196,7 +196,7 @@
                 }, 
                 {
                  "gid":3656,
-                 "height”:16,
+                 "height":16,
                  "id":18,
                  "name":"",
                  "properties":
@@ -206,9 +206,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width”:16,
-                 "x":1887,
-                 "y":240
+                 "width":16,
+                 "x":1897,
+                 "y":212
                 }, 
                 {
                  "gid":681,
@@ -228,7 +228,7 @@
                 }, 
                 {
                  "gid":3656,
-                 "height”:16,
+                 "height":16,
                  "id":25,
                  "name":"",
                  "properties":
@@ -238,9 +238,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width”:16,
-                 "x":1,
-                 "y":1161
+                 "width":16,
+                 "x":5,
+                 "y":1141
                 }, 
                 {
                  "gid":3305,
@@ -343,7 +343,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"tilesets\/tileset.png",
+         "image":"..\/..\/..\/..\/..\/Desktop\/Team99\/LastContact\/assets\/tilemaps\/tilesets\/tileset.png",
          "imageheight":1280,
          "imagewidth":800,
          "margin":0,

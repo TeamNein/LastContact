@@ -97,7 +97,7 @@ TopDownGame.Game.prototype = {
         // Create keys the player can pick up
         this.keys = this.game.add.group();
         this.keys.enableBody = true;
-        var key;    
+        var key;
         result = this.findObjectsByType('key', this.map, 'Objects');
 
         result.forEach(function(element){
@@ -271,10 +271,7 @@ TopDownGame.Game.prototype = {
     },
     PlayerToxicOverlap: function(mplayer, enemy){
     
-        this.player.damage(1);   
-            //this.toggleInvincible(this.player); 
-        //this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
-            
+        this.player.damage(1);
 
         mplayer.body.velocity.y = -jump_velocity; 
      
@@ -291,8 +288,6 @@ TopDownGame.Game.prototype = {
     enterDoor: function(player, door) {
         console.log('entering door that will take you to '+door.targetTilemap+' on x:'+door.targetX+' and y:'+door.targetY);
     },
-  
-
 };    
 
 
