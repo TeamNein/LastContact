@@ -10,8 +10,12 @@ TopDownGame.Preload.prototype = {
         this.preloadBar.anchor.setTo(0.5);
         this.load.setPreloadSprite(this.preloadBar);
 
+        //for pregme screen
+        this.load.image('ship', 'assets/images/ship2.png');
+        this.load.image('spacetitle', 'assets/images/spaceTitle.png');
+
         //load game assets
-        this.load.tilemap('level1-5', 'assets/tilemaps/level1-5.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('level1-6', 'assets/tilemaps/level1-6.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('spacetiles', 'assets/images/tileset.png');
         this.load.image('key', 'assets/images/key.png');
         this.load.image('alien', 'assets/images/alienTest.png');
@@ -20,8 +24,17 @@ TopDownGame.Preload.prototype = {
         this.load.image('Background', 'assets/images/starBG.jpg');
         
         this.load.image('bullet', 'assets/images/bullet.png');
+        this.load.image('bulletreversed', 'assets/images/bulletreversed.png');
+        this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+
+
         },
-        create: function() {
-        this.state.start('Game');
+        
+    create: function() {
+        //add title screen state 
+
+        this.state.start('Title');
+
+        //this.state.start('Game');
     }
 };

@@ -1,12 +1,16 @@
 var TopDownGame = TopDownGame || {};
 
 // Title screen
+
+//to update text for player lives 
+var text; 
+
 TopDownGame.Game = function(){};
 
 TopDownGame.Game.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1-5');
+        this.map = this.game.add.tilemap('level1-6');
         var sky = this.game.add.image(0, 0, 'Background');
 
         // Arguments: tileset name as specified in Tiled
@@ -47,7 +51,8 @@ TopDownGame.Game.prototype = {
 
         //this.player.hits = 0; 
 
-        this.player.health = 100; 
+        //give the player 5 lives, lost when hit alien/bullet
+        this.player.health = 5; 
         //this.player.alive = true; 
 
         // Makes the camera follow the player in the world
@@ -67,8 +72,22 @@ TopDownGame.Game.prototype = {
         bullets.setAll('checkWorldBounds', true);
         bullets.setAll('outOfBoundsKill', true);
 
-      
 
+
+        bulletsreversed = this.game.add.group(); 
+        bulletsreversed.enableBody = true; 
+        this.game.physics.enable(bulletsreversed, Phaser.Physics.ARCADE); 
+
+        bulletsreversed.createMultiple(40, 'bulletreversed');
+        bulletsreversed.setAll('checkWorldBounds', true);
+        bulletsreversed.setAll('outOfBoundsKill', true);
+
+        text = this.game.add.text(650, 50, "LIVES: " + this.player.health);
+        text.font = 'Revalia';
+        text.fill = "#00FF00";
+        text.fixedToCamera = true; 
+        text.cameraOffset.setTo(650, 50); 
+        text.fontSize = 20;
     },
     
 
@@ -94,7 +113,7 @@ TopDownGame.Game.prototype = {
         var index; 
         for(index = 0; index < result.length; index++){
             this.alien = this.game.add.sprite(result[index].x, result[index].y, 'alien');
-            this.alien.scale.setTo(.10, .10);
+            this.alien.scale.setTo(.075, .075);
             this.alien.enableBody = true; 
             this.game.physics.arcade.enable(this.alien);
             this.alien.body.collideWorldBounds = true;
@@ -177,47 +196,83 @@ TopDownGame.Game.prototype = {
         }
 
         // arcade.collide for barrier Object 
-        this.game.physics.arcade.overlap(this.player, this.keys, this.enemies, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
 
 
-        this.enemies.forEach(function(alien){        
-             if((alien.body.velocity.x > 0 && alien.x > alien.startPosX + 20) || 
+        this.enemies.forEach(function(alien){      
 
-                (alien.body.velocity.x < 0 && alien.x < alien.startPosX - 20)) {
+             if(alien.body.velocity.x > 0 && alien.x > alien.startPosX + 20) {
 
-                    alien.body.velocity.x *= -1; 
+                alien.body.velocity.x *= -1; 
+                var bullet = bullets.getFirstExists(false);
 
-                    var bullet = bullets.getFirstExists(false);
-
-                    if (bullet)
+                if (bullet)
                     {
                         bullet.reset(alien.x, alien.y);
-                        bullet.enableBody = true; 
-                        //multiply by sign of alien x velcity to send in correct direction 
-                        bullet.body.velocity.x = (alien.body.velocity.x/alien.body.velocity.x) * 250; 
+                        //bullet.enableBody = true; 
+                        bullet.body.velocity.x = 250; 
                         bullet.scale.set(.05, .05);
                     }
+             }
 
-                } 
+             //so we can use a the reversed bullet sprite 
+             
+             else if (alien.body.velocity.x < 0 && alien.x < alien.startPosX - 20) {
+                alien.body.velocity.x *= -1; 
+                var bullet = bulletsreversed.getFirstExists(false);
+
+                 if (bullet)
+                    {
+                        bullet.reset(alien.x, alien.y);
+                        bullet.enableBody = true;
+                        bullet.body.velocity.x = -250; 
+                        bullet.scale.set(.05, .05);
+                    }
+             }
         }); 
 
         //could change to colllide instead of overlap         
         if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
-            this.player.damage(1);   
-            //move it backwards so it doesn't get hit again... this sort of sucks
-            this.player.x = this.player.x-5;   
-            //for dubugging
-            console.log('hit!' + this.player.health); 
+            if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(2000, this.toggleInvincible, this); 
+            }
+            
+            this.player.body.velocity.y = -350;  
+
+            console.log('Alien hit! You have ' + this.player.health + ' lives left'); 
+            text.setText("LIVES: " + this.player.health);
         }
 
-        if (this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) {
-            this.player.damage(1);
-            //for debugging
-           bullets.destroy();
-            console.log('hit!' + this.player.health);
+
+        if ((this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) 
+             || (this.game.physics.arcade.collide(this.player, bulletsreversed, null, null, this.game)) )
+
+         {
+            if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(2000, this.toggleInvincible, this); 
+            }
+
+            this.player.body.velocity.y = -350; 
+         
+            console.log('Bullet hit! You have '  + this.player.health + ' lives left' );
+            text.setText("LIVES: " + this.player.health); 
+
         }
 
+        if (this.player.health == 0 ) {
+             this.state.start("Gameover");
+        }
+     
+
+    },
+
+    toggleInvincible: function (player) {
+        this.player.invincible = !this.player.invincible; 
     },
 
     collect: function(player, collectable) {
@@ -231,8 +286,6 @@ TopDownGame.Game.prototype = {
   
 
 };    
-
-
 
 
 

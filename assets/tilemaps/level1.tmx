@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-up" width="120" height="75" tilewidth="16" tileheight="16" nextobjectid="8">
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="120" height="75" tilewidth="16" tileheight="16" nextobjectid="21">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="4000">
-  <image source="tilesets/tileset.png" width="800" height="1280"/>
+  <image source="../../../../../lastcontact3/LastContact/assets/tilemaps/tilesets/tileset.png" width="800" height="1280"/>
  </tileset>
  <layer name="TileLayer" width="120" height="75">
   <data encoding="csv">
@@ -94,6 +94,58 @@
     <property name="type" value="playerStart"/>
    </properties>
   </object>
+  <object id="8" type="sprite" gid="1073745129" x="988" y="228" width="16" height="16">
+   <properties>
+    <property name="key" value="alien"/>
+    <property name="sprite" value="alien"/>
+   </properties>
+  </object>
+  <object id="9" gid="3305" x="1050" y="454" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="10" gid="3305" x="1012" y="1010" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="11" gid="3305" x="559.333" y="940.667" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="12" gid="3305" x="1214" y="158" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="13" gid="3305" x="398.667" y="678.667" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="14" gid="3305" x="1644" y="560" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="15" gid="3305" x="1436" y="226" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="16" gid="3305" x="1360" y="498" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="18" gid="3305" x="256" y="1107" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="20" gid="3305" x="298" y="1023" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Object Layer 2" visible="0"/>
  <objectgroup name="Object Layer 3" visible="0"/>
