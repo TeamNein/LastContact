@@ -133,6 +133,7 @@ TopDownGame.Game.prototype = {
         this.startDoors.enableBody = true;
         var startdoor; 
         result = this.findObjectsByType('startdoor', this.map, 'Objects');
+        
         result.forEach(function(element){
           this.createFromTiledObject(element, this.startDoors);
         }, this);
