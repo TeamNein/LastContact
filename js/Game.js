@@ -47,7 +47,8 @@ TopDownGame.Game.prototype = {
 
         //this.player.hits = 0; 
 
-        this.player.health = 100; 
+        //give the player 5 lives, lost when hit alien/bullet
+        this.player.health = 5; 
         //this.player.alive = true; 
 
         // Makes the camera follow the player in the world
@@ -67,7 +68,12 @@ TopDownGame.Game.prototype = {
         bullets.setAll('checkWorldBounds', true);
         bullets.setAll('outOfBoundsKill', true);
 
-      
+        var text = this.game.add.text(650, 50, "lives left: " + this.player.health);
+        text.font = 'Revalia';
+        text.fill = "#00FF00";
+        text.fixedToCamera = true; 
+        text.cameraOffset.setTo(650, 50); 
+        text.fontSize = 20;
 
     },
     
@@ -94,7 +100,7 @@ TopDownGame.Game.prototype = {
         var index; 
         for(index = 0; index < result.length; index++){
             this.alien = this.game.add.sprite(result[index].x, result[index].y, 'alien');
-            this.alien.scale.setTo(.10, .10);
+            this.alien.scale.setTo(.075, .075);
             this.alien.enableBody = true; 
             this.game.physics.arcade.enable(this.alien);
             this.alien.body.collideWorldBounds = true;
@@ -177,7 +183,7 @@ TopDownGame.Game.prototype = {
         }
 
         // arcade.collide for barrier Object 
-        this.game.physics.arcade.overlap(this.player, this.keys, this.enemies, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
 
 
@@ -206,16 +212,23 @@ TopDownGame.Game.prototype = {
         if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
             this.player.damage(1);   
             //move it backwards so it doesn't get hit again... this sort of sucks
-            this.player.x = this.player.x-5;   
+            //this.player.x = 0;
+            //this.player.y = 1000;  
+
+            this.player.body.velocity.y = -350;  
             //for dubugging
-            console.log('hit!' + this.player.health); 
+            console.log('Alien hit! You have ' + this.player.health + ' lives left'); 
         }
+
 
         if (this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) {
             this.player.damage(1);
+            //this.player.x = 0; 
+            //this.player.y = 1050; 
+             this.player.body.velocity.y = -350; 
             //for debugging
-           bullets.destroy();
-            console.log('hit!' + this.player.health);
+            //bullets.remove();
+            console.log('Bullet hit! You have '  + this.player.health + ' lives left' );
         }
 
     },
