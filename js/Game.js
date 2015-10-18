@@ -14,11 +14,11 @@ TopDownGame.Game = function(){};
 TopDownGame.Game.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1-6');
+        this.map = this.game.add.tilemap('level1');
         var sky = this.game.add.image(0, 0, 'Background');
 
         // Arguments: tileset name as specified in Tiled
-        //            key to the asset
+        // key to the asset
         this.map.addTilesetImage('tiles', 'spacetiles');
 
         // Create layer
@@ -133,7 +133,7 @@ TopDownGame.Game.prototype = {
         this.startDoors.enableBody = true;
         var startdoor; 
         result = this.findObjectsByType('startdoor', this.map, 'Objects');
-        
+
         result.forEach(function(element){
           this.createFromTiledObject(element, this.startDoors);
         }, this);
