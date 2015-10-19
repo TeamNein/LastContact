@@ -15,10 +15,10 @@ TopDownGame.Preload.prototype = {
         this.load.image('spacetitle', 'assets/images/spaceTitle.jpg');
 
         //load game assets
-        this.load.tilemap('level1-6', 'assets/tilemaps/level1-8.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('level1', 'assets/tilemaps/level1-7.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('spacetiles', 'assets/images/tileset.png');
         this.load.image('key', 'assets/images/key.png');
-        this.load.image('alien', 'assets/images/alienTest.png');
+        this.load.image('alien', 'assets/images/player.png');
         this.load.spritesheet('astronaut', 'assets/images/astro_sheet.png', 38, 60);
         // // this.load.image('browndoor', 'assets/images/browndoor.png');
         this.load.image('Background', 'assets/images/starBG.jpg');

@@ -14,11 +14,11 @@ TopDownGame.Game = function(){};
 TopDownGame.Game.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1-6');
+        this.map = this.game.add.tilemap('level1');
         var sky = this.game.add.image(0, 0, 'Background');
 
         // Arguments: tileset name as specified in Tiled
-        //            key to the asset
+        // key to the asset
         this.map.addTilesetImage('tiles', 'spacetiles');
 
         // Create layer
@@ -93,7 +93,17 @@ TopDownGame.Game.prototype = {
     },
     
 
-    
+    createKey: function() {
+        // Create keys the player can pick up
+        this.keys = this.game.add.group();
+        this.keys.enableBody = true;
+        var key;
+        result = this.findObjectsByType('key', this.map, 'Objects');
+
+        result.forEach(function(element){
+          this.createFromTiledObject(element, this.keys);
+        }, this);
+    },
 
     createAlien: function () {
 
@@ -135,6 +145,7 @@ TopDownGame.Game.prototype = {
         this.startDoors.enableBody = true;
         var startdoor; 
         result = this.findObjectsByType('startdoor', this.map, 'Objects');
+
         result.forEach(function(element){
           this.createFromTiledObject(element, this.startDoors);
         }, this);
@@ -183,8 +194,8 @@ TopDownGame.Game.prototype = {
         this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         this.game.physics.arcade.overlap(this.player, this.enemies, this.PlayerEnemyOverlap, null, this);
-        this.game.physics.arcade.overlap(this.player, bullets, this.PlayerEnemyOverlap, null, this);
-        this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerEnemyOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bullets, this.PlayerBulletOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerBulletOverlap, null, this);
 
 
         this.player.body.velocity.x *= .1;
@@ -271,12 +282,23 @@ TopDownGame.Game.prototype = {
                 text.setText("LIVES: " + mplayer.health); 
         }
     },
+
+    PlayerBulletOverlap: function(mplayer, bullet){
+         if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
+                bullet.kill();
+             
+                console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+                text.setText("LIVES: " + mplayer.health); 
+        }
+    },
+
+
     PlayerToxicOverlap: function(mplayer, enemy){
     
-        this.player.damage(1);   
-            //this.toggleInvincible(this.player); 
-        //this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
-            
+        this.player.damage(1);
 
         mplayer.body.velocity.y = -jump_velocity; 
      
@@ -293,8 +315,6 @@ TopDownGame.Game.prototype = {
     enterDoor: function(player, door) {
         console.log('entering door that will take you to '+door.targetTilemap+' on x:'+door.targetX+' and y:'+door.targetY);
     },
-  
-
 };    
 
 
