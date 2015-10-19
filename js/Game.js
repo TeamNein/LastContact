@@ -12,6 +12,8 @@ var x_velocity = 150;
 var shootAudio; 
 var dieAudio; 
 var keyAudio; 
+var keys_collected = 0;
+var total_keys = 0;
 
 TopDownGame.Game = function(){};
 
@@ -151,6 +153,7 @@ TopDownGame.Game.prototype = {
         result = this.findObjectsByType('key', this.map, 'Objects');
 
         result.forEach(function(element){
+            total_keys++;
           this.createFromTiledObject(element, this.keys);
         }, this);
     },
@@ -163,7 +166,12 @@ TopDownGame.Game.prototype = {
         result = this.findObjectsByType('startdoor', this.map, 'Objects');
 
         result.forEach(function(element){
-          this.createFromTiledObject(element, this.startDoors);
+            console.log(element.x + " and " + element.y);
+            this.startdoor = this.game.add.sprite(element.x, element.y, 'startdoor');
+            this.startdoor.anchor.setTo(.5, .5);
+            this.startdoor.scale.setTo(0.12, 0.12);
+            this.startDoors.add(this.startdoor);
+        //  this.createFromTiledObject(element, this.startDoors);
         }, this);
     },
     createFinishDoors: function() {
@@ -173,8 +181,11 @@ TopDownGame.Game.prototype = {
         var finishdoor;
         result = this.findObjectsByType('finishdoor', this.map, 'Objects');
         result.forEach(function(element){
-            console.log(element.x + " and " + element.y);
-          this.createFromTiledObject(element, this.finishDoors);
+            this.finishdoor = this.game.add.sprite(element.x, element.y, 'finishdoor');
+            this.finishdoor.anchor.setTo(.5, .5);
+            this.finishdoor.scale.setTo(0.12, 0.12);
+            this.finishDoors.add(this.finishdoor);
+         // this.createFromTiledObject(element, this.finishDoors);
         }, this);
     },
 
@@ -207,11 +218,13 @@ TopDownGame.Game.prototype = {
         // Handle collision
         this.game.physics.arcade.collide(this.player, this.blockedLayer);  
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
+        this.game.physics.arcade.collide(this.enemies, this.toxicLayer);
         this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         this.game.physics.arcade.overlap(this.player, this.enemies, this.PlayerEnemyOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, bullets, this.PlayerBulletOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerBulletOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, this.finishDoors, this.PlayerFinished, null, this);
 
 
         this.player.body.velocity.x *= .1;
@@ -295,7 +308,11 @@ TopDownGame.Game.prototype = {
     toggleInvincible: function (mplayer) {
         this.player.invincible = !this.player.invincible; 
     },
-
+    PlayerFinished: function(player, door) {
+        if(keys_collected == total_keys){
+            console.log("move to next level!");
+        }
+    },
 
     PlayerEnemyOverlap: function(mplayer, enemy){
          if(!this.player.invincible) {
@@ -335,6 +352,7 @@ TopDownGame.Game.prototype = {
      
         console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
         text.setText("LIVES: " + mplayer.health); 
+        shootAudio.play();
         
     },
    
@@ -343,11 +361,9 @@ TopDownGame.Game.prototype = {
         // Remove sprite
         keyAudio.play(); 
         collectable.destroy();
+        keys_collected++;
     },
     enterDoor: function(player, door) {
         console.log('entering door that will take you to '+door.targetTilemap+' on x:'+door.targetX+' and y:'+door.targetY);
     },
 };    
-
-
-
