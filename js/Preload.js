@@ -31,6 +31,11 @@ TopDownGame.Preload.prototype = {
         this.load.audio('shootAudio', 'assets/sounds/Laser_Shoot.mp3');
         this.load.audio('dieAudio', 'assets/sounds/Powerup13.mp3');
         this.load.audio('keyAudio', 'assets/sounds/keyAudio.mp3');
+        this.load.audio('lasershootAudio', 'assets/sounds/New_Laser_Shoot.wav');
+        this.load.audio('jumpAudio', 'assets/sounds/Jump.wav');
+        this.load.audio('music', 'assets/sounds/Music.mp3');
+
+
         },
         
     create: function() {

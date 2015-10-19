@@ -94,9 +94,13 @@ TopDownGame.Game.prototype = {
         text.cameraOffset.setTo(650, 50); 
         text.fontSize = 20;
 
-         shootAudio = this.game.add.audio('shootAudio'); 
-         dieAudio = this.game.add.audio ('dieAudio');
-         keyAudio = this.game.add.audio ('keyAudio'); 
+        shootAudio = this.game.add.audio('shootAudio'); 
+        dieAudio = this.game.add.audio ('dieAudio');
+        keyAudio = this.game.add.audio ('keyAudio'); 
+        newshootAudio = this.game.add.audio('lasershootAudio');
+        jumpAudio = this.game.add.audio('jumpAudio');
+        
+
 
     },
     
@@ -238,6 +242,7 @@ TopDownGame.Game.prototype = {
         if (this.cursors.up.isDown && this.player.body.blocked.down)
         {
             this.player.body.velocity.y = -jump_velocity;
+            jumpAudio.play();
         }
 
         this.enemies.forEach(function(alien){      
@@ -245,8 +250,6 @@ TopDownGame.Game.prototype = {
              if (alien.body.velocity.x > 0) {
                 //alien.animations.play('right');
                 if (alien.x > alien.startPosX + 20) {
-
-
                     alien.body.velocity.x *= -1; 
                     var bullet = bullets.getFirstExists(false);
 
@@ -257,8 +260,10 @@ TopDownGame.Game.prototype = {
                         bullet.body.velocity.x = 250; 
                         bullet.scale.set(.025, .025);
                     }
+                    newshootAudio.play();
                 }
                 alien.animations.play('right');
+
 
              } else if (alien.body.velocity.x < 0) {
                 //alien.animations.play('left');
@@ -274,6 +279,8 @@ TopDownGame.Game.prototype = {
                          bullet.body.velocity.x = -250;
                          bullet.scale.set(0.025, 0.025);
                      }
+                    newshootAudio.play();
+
                  }
                 alien.animations.play('left');
              }
