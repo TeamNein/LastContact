@@ -18,15 +18,14 @@ TopDownGame.Preload.prototype = {
         this.load.tilemap('level1', 'assets/tilemaps/level1-7.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('spacetiles', 'assets/images/tileset.png');
         this.load.image('key', 'assets/images/key.png');
-<<<<<<< HEAD
-        this.load.image('alien', 'assets/images/alienTest.png');
-=======
-        //this.load.image('alien', 'assets/images/player.png');
         this.load.spritesheet('alien', 'assets/images/alien_sheet.png', 32, 60);
->>>>>>> d00dfb40d1e363b07ae984b94b4d905a5a455b7e
         this.load.spritesheet('astronaut', 'assets/images/astro_sheet.png', 38, 60);
+<<<<<<< HEAD
 
         this.load.image('Background', 'assets/images/starBG.jpg');
+=======
+        this.load.image('Background', 'assets/images/starBGpixel.jpg');
+>>>>>>> c34dd32981e370e0f0c029d5530205585f7a2133
         this.load.image('startdoor', 'assets/images/door.png');
         this.load.image('finishdoor', 'assets/images/doorend.jpg');
 
@@ -37,6 +36,11 @@ TopDownGame.Preload.prototype = {
         this.load.audio('shootAudio', 'assets/sounds/Laser_Shoot.mp3');
         this.load.audio('dieAudio', 'assets/sounds/Powerup13.mp3');
         this.load.audio('keyAudio', 'assets/sounds/keyAudio.mp3');
+        this.load.audio('lasershootAudio', 'assets/sounds/New_Laser_Shoot.wav');
+        this.load.audio('jumpAudio', 'assets/sounds/Jump.wav');
+        this.load.audio('music', 'assets/sounds/Music.mp3');
+
+
         },
         
     create: function() {
