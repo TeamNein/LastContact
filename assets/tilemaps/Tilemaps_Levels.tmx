@@ -89,7 +89,7 @@
     <property name="type" value="key"/>
    </properties>
   </object>
-  <object id="4" gid="77" x="14" y="1159" width="38" height="60">
+  <object id="4" gid="77" x="25" y="1159" width="38" height="60">
    <properties>
     <property name="type" value="playerStart"/>
    </properties>
@@ -140,13 +140,17 @@
     <property name="type" value="alien"/>
    </properties>
   </object>
-  <object id="18" gid="3656" x="1897" y="212" width="16" height="16">
+  <object id="18" gid="3656" x="1880" y="212" width="16" height="16">
    <properties>
     <property name="type" value="finishdoor"/>
    </properties>
   </object>
-  <object id="22" gid="681" x="63" y="141" width="16" height="16"/>
-  <object id="25" gid="3656" x="5" y="1141" width="16" height="16">
+  <object id="22" gid="681" x="63" y="141" width="16" height="16">
+   <properties>
+    <property name="type" value="friend"/>
+   </properties>
+  </object>
+  <object id="25" gid="3656" x="38" y="1145" width="16" height="16">
    <properties>
     <property name="type" value="startdoor"/>
    </properties>

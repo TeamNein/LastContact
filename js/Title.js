@@ -14,7 +14,10 @@ var clickSize = titleSize - 30;
 WebFontConfig = {
 
     // Set a delay
-    active: function() { this.game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+    active: function() { 
+        //this.game.time.events.add(1000, createText, this); 
+       // this.createText();
+    },
 
     // The Google Fonts we want to load, specified in the array above
     google: {
