@@ -115,7 +115,10 @@ TopDownGame.Game.prototype = {
         var index; 
         for(index = 0; index < result.length; index++){
             this.alien = this.game.add.sprite(result[index].x, result[index].y, 'alien');
-            this.alien.scale.setTo(.075, .075);
+            var spriteFPS = 5; 
+            this.alien.animations.add('left', [0, 1, 2, 3], spriteFPS, true);
+            this.alien.animations.add('right', [5, 6, 7, 8], spriteFPS, true);
+            this.alien.scale.setTo(0.7, 0.7);
             this.alien.enableBody = true; 
             this.game.physics.arcade.enable(this.alien);
             this.alien.body.collideWorldBounds = true;
@@ -123,6 +126,7 @@ TopDownGame.Game.prototype = {
             this.alien.body.gravity.y = 25;
             this.alien.body.velocity.x = 10; 
             this.alien.startPosX = this.alien.x; 
+            this.alien.anchor.setTo(0.5, 0.5);
             this.enemies.add(this.alien); 
         }
     },
@@ -218,32 +222,38 @@ TopDownGame.Game.prototype = {
 
         this.enemies.forEach(function(alien){      
 
-             if(alien.body.velocity.x > 0 && alien.x > alien.startPosX + 20) {
+             if (alien.body.velocity.x > 0) {
+                //alien.animations.play('right');
 
-                alien.body.velocity.x *= -1; 
-                var bullet = bullets.getFirstExists(false);
+                if (alien.x > alien.startPosX + 20) {
+                    alien.body.velocity.x *= -1; 
+                    var bullet = bullets.getFirstExists(false);
 
-                if (bullet)
+                    if (bullet)
                     {
                         bullet.reset(alien.x, alien.y);
                         bullet.body.velocity.x = 250; 
-                        bullet.scale.set(.05, .05);
+                        bullet.scale.set(.025, .025);
                     }
-             }
+                }
+                alien.animations.play('right');
 
-             //so we can use a the reversed bullet sprite 
-             
-             else if (alien.body.velocity.x < 0 && alien.x < alien.startPosX - 20) {
-                alien.body.velocity.x *= -1; 
-                var bullet = bulletsreversed.getFirstExists(false);
+             } else if (alien.body.velocity.x < 0) {
+                //alien.animations.play('left');
 
-                 if (bullet)
-                    {
-                        bullet.reset(alien.x, alien.y);
-                        bullet.enableBody = true;
-                        bullet.body.velocity.x = -250; 
-                        bullet.scale.set(.05, .05);
-                    }
+                 if (alien.x < alien.startPosX - 20) {
+                     alien.body.velocity.x *= -1;
+                     var bullet = bulletsreversed.getFirstExists(false);
+
+                     if (bullet)
+                     {
+                         bullet.reset(alien.x, alien.y);
+                         bullet.enableBody = true;
+                         bullet.body.velocity.x = -250;
+                         bullet.scale.set(0.025, 0.025);
+                     }
+                 }
+                alien.animations.play('left');
              }
         });
 
