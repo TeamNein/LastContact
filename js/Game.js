@@ -1,11 +1,12 @@
 var TopDownGame = TopDownGame || {};
 
-// Title screen
-
-//to update text for player lives 
+// Update text for player lives 
 var text; 
-var player_invinsible_time = 2;
-var player_is_invinsible = false;
+
+// Invincibility
+var player_invincible_time = 2;
+var player_is_invincible = false;
+
 var jump_velocity = 350;
 var x_velocity = 150;
 
@@ -21,11 +22,11 @@ TopDownGame.Game.prototype = {
         // key to the asset
         this.map.addTilesetImage('tiles', 'spacetiles');
 
-        // Create layer
+        // Create layers
         this.blockedLayer = this.map.createLayer('TileLayer');
         this.toxicLayer = this.map.createLayer('ToxicLiquidLayer');
 
-        //collision on blockedLayer
+        // Collision on blockedLayer
         this.map.setCollisionBetween(0, 2000, true, 'TileLayer');
         this.map.setCollisionBetween(400, 405, true, 'ToxicLiquidLayer');
 
@@ -33,7 +34,6 @@ TopDownGame.Game.prototype = {
         this.blockedLayer.resizeWorld();
 
         this.createKey();
- 
         this.createAlien();
 
         this.createStartDoors();
@@ -43,50 +43,50 @@ TopDownGame.Game.prototype = {
         var result = this.findObjectsByType('playerStart', this.map, 'Objects')
         this.player = this.game.add.sprite(result[0].x, result[0].y, 'astronaut');
         this.player.scale.setTo(0.5, 0.5);
-
-
+        // Set up player animations
         var spriteFPS = 5;
         this.player.animations.add('left', [0, 1, 2], spriteFPS, true);
         this.player.animations.add('right', [4, 5, 6], spriteFPS, true);
-
+        // Add player to the game
         this.game.physics.arcade.enable(this.player);
-
         //  Player physics properties
         this.player.body.bounce.y = 0;
         this.player.body.gravity.y = 500;
         this.player.body.collideWorldBounds = true;
-
-
-        //give the player 5 lives, lost when hit alien/bullet
+        // Give the player 5 lives, lost on contact with alien/bullet
         this.player.health = 5; 
-
         // Makes the camera follow the player in the world
         this.game.camera.follow(this.player);
+
 
         // Move player with cursor keys
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-        //create bullets to shoot
+
+        // Create bullets to for aliens to shoot
         bullets = this.game.add.group(); 
         bullets.enableBody = true; 
-
         this.game.physics.enable(bullets, Phaser.Physics.ARCADE); 
-
         bullets.createMultiple(40, 'bullet');
+        // Make bullets recyclable 
         bullets.setAll('checkWorldBounds', true);
         bullets.setAll('outOfBoundsKill', true);
 
+        // Create bullets to shoot in the opposite direction
         bulletsreversed = this.game.add.group(); 
         bulletsreversed.enableBody = true; 
         this.game.physics.enable(bulletsreversed, Phaser.Physics.ARCADE); 
-
+        // Make them recyclable as well
         bulletsreversed.createMultiple(40, 'bulletreversed');
         bulletsreversed.setAll('checkWorldBounds', true);
         bulletsreversed.setAll('outOfBoundsKill', true);
 
+
+        // Create text to display player lives 
         text = this.game.add.text(650, 50, "LIVES: " + this.player.health);
-        text.font = 'Revalia';
+        text.font = currFont;
         text.fill = "#00FF00";
+        // Specify position
         text.fixedToCamera = true; 
         text.cameraOffset.setTo(650, 50); 
         text.fontSize = 20;
@@ -271,7 +271,7 @@ TopDownGame.Game.prototype = {
          if(!this.player.invincible) {
                 this.player.damage(1);   
                 this.toggleInvincible(this.player); 
-                this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
+                this.game.time.events.add(1000 * player_invincible_time, this.toggleInvincible, this); 
             
 
                 mplayer.body.velocity.y = -jump_velocity; 
@@ -285,7 +285,7 @@ TopDownGame.Game.prototype = {
          if(!this.player.invincible) {
                 this.player.damage(1);   
                 this.toggleInvincible(this.player); 
-                this.game.time.events.add(1000 * player_invinsible_time, this.toggleInvincible, this); 
+                this.game.time.events.add(1000 * player_invincible_time, this.toggleInvincible, this); 
                 bullet.kill();
              
                 console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
