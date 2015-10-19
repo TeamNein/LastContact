@@ -16,6 +16,9 @@ TopDownGame.Preload.prototype = {
 
         //load game assets
         this.load.tilemap('level1', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('level2', 'assets/tilemaps/level2-map2.json', null, Phaser.Tilemap.TILED_JSON);
+
+
         this.load.image('spacetiles', 'assets/images/tileset.png');
         this.load.image('key', 'assets/images/key.png');
         this.load.spritesheet('alien', 'assets/images/alien_sheet.png', 32, 60);

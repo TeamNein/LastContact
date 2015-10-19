@@ -1,3 +1,5 @@
+//level 2
+
 var TopDownGame = TopDownGame || {};
 
 // Update text for player lives 
@@ -15,12 +17,12 @@ var keyAudio;
 var keys_collected = 0;
 var total_keys = 0;
 
-TopDownGame.Game = function(){};
+TopDownGame.level2 = function(){};
 
-TopDownGame.Game.prototype = {
+TopDownGame.level2.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1');
+        this.map = this.game.add.tilemap('level2');
         var sky = this.game.add.image(0, 0, 'Background');
 
         // Arguments: tileset name as specified in Tiled
@@ -59,7 +61,7 @@ TopDownGame.Game.prototype = {
         this.player.body.gravity.y = 500;
         this.player.body.collideWorldBounds = true;
         // Give the player 5 lives, lost on contact with alien/bullet
-        this.player.health = 5; 
+        this.player.health = 1000; 
         // Makes the camera follow the player in the world
         this.game.camera.follow(this.player);
 
@@ -311,7 +313,7 @@ TopDownGame.Game.prototype = {
     PlayerFinished: function(player, door) {
         if(keys_collected == total_keys){
             console.log("move to next level!");
-            this.state.start("level2");
+            this.state.start("level2"); 
         }
     },
 
