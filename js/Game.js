@@ -8,6 +8,9 @@ var player_invinsible_time = 2;
 var player_is_invinsible = false;
 var jump_velocity = 350;
 var x_velocity = 150;
+var shootAudio; 
+var dieAudio; 
+var keyAudio; 
 
 TopDownGame.Game = function(){};
 
@@ -90,6 +93,11 @@ TopDownGame.Game.prototype = {
         text.fixedToCamera = true; 
         text.cameraOffset.setTo(650, 50); 
         text.fontSize = 20;
+
+         shootAudio = this.game.add.audio('shootAudio'); 
+         dieAudio = this.game.add.audio ('dieAudio');
+         keyAudio = this.game.add.audio ('keyAudio'); 
+
     },
     
 
@@ -233,6 +241,7 @@ TopDownGame.Game.prototype = {
              if(alien.body.velocity.x > 0 && alien.x > alien.startPosX + 20) {
 
                 alien.body.velocity.x *= -1; 
+
                 var bullet = bullets.getFirstExists(false);
 
                 if (bullet)
@@ -260,6 +269,7 @@ TopDownGame.Game.prototype = {
         });
 
         if (this.player.health == 0 ) {
+            dieAudio.play(); 
              this.state.start("Gameover");
         }
     },
@@ -280,6 +290,7 @@ TopDownGame.Game.prototype = {
              
                 console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
                 text.setText("LIVES: " + mplayer.health); 
+                shootAudio.play(); 
         }
     },
 
@@ -292,6 +303,8 @@ TopDownGame.Game.prototype = {
              
                 console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
                 text.setText("LIVES: " + mplayer.health); 
+               
+                shootAudio.play(); 
         }
     },
 
@@ -310,6 +323,7 @@ TopDownGame.Game.prototype = {
     collect: function(player, collectable) {
         console.log('collected');
         // Remove sprite
+        keyAudio.play(); 
         collectable.destroy();
     },
     enterDoor: function(player, door) {

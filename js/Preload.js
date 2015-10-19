@@ -29,7 +29,9 @@ TopDownGame.Preload.prototype = {
         this.load.image('bulletreversed', 'assets/images/bulletreversed.png');
         this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
-
+        this.load.audio('shootAudio', 'assets/sounds/Laser_Shoot.mp3');
+        this.load.audio('dieAudio', 'assets/sounds/Powerup13.mp3');
+        this.load.audio('keyAudio', 'assets/sounds/keyAudio.mp3');
         },
         
     create: function() {
