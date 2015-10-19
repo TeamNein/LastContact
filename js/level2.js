@@ -1,3 +1,5 @@
+//level 2
+
 var TopDownGame = TopDownGame || {};
 
 // Update text for player lives 
@@ -15,25 +17,27 @@ var keyAudio;
 var keys_collected = 0;
 var total_keys = 0;
 
-TopDownGame.Game = function(){};
+TopDownGame.level2 = function(){};
 
-TopDownGame.Game.prototype = {
+TopDownGame.level2.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1');
+
+        this.map = this.game.add.tilemap('level2');
         var sky = this.game.add.image(0, 0, 'Background');
 
         // Arguments: tileset name as specified in Tiled
         // key to the asset
         this.map.addTilesetImage('tiles', 'spacetiles');
 
+        console.log("level2");
         // Create layers
         this.blockedLayer = this.map.createLayer('TileLayer');
-        this.toxicLayer = this.map.createLayer('ToxicLiquidLayer');
+        //this.toxicLayer = this.map.createLayer('ToxicLiquidLayer');
 
         // Collision on blockedLayer
         this.map.setCollisionBetween(0, 2000, true, 'TileLayer');
-        this.map.setCollisionBetween(400, 405, true, 'ToxicLiquidLayer');
+        //this.map.setCollisionBetween(400, 405, true, 'ToxicLiquidLayer');
 
         // Resize the game world to match the layer dimensions
         this.blockedLayer.resizeWorld();
@@ -41,7 +45,7 @@ TopDownGame.Game.prototype = {
         this.createKey();
         this.createAlien();
 
-        this.createStartDoors();
+        //this.createStartDoors();
         this.createFinishDoors();
 
         // Create player
@@ -138,7 +142,7 @@ TopDownGame.Game.prototype = {
             this.alien.body.collideWorldBounds = true;
             this.game.physics.arcade.collide(this.alien, this.blockedLayer);
             this.alien.body.gravity.y = 25;
-            this.alien.body.velocity.x = 10; 
+            this.alien.body.velocity.x = 40; 
             this.alien.startPosX = this.alien.x; 
             this.alien.anchor.setTo(0.5, 0.5);
             this.enemies.add(this.alien); 
@@ -158,7 +162,7 @@ TopDownGame.Game.prototype = {
         }, this);
     },
     
-    createStartDoors: function() {
+   /* createStartDoors: function() {
         //create doors
         this.startDoors = this.game.add.group();
         this.startDoors.enableBody = true;
@@ -173,7 +177,7 @@ TopDownGame.Game.prototype = {
             this.startDoors.add(this.startdoor);
         //  this.createFromTiledObject(element, this.startDoors);
         }, this);
-    },
+    }, */
     createFinishDoors: function() {
         //create doors
         this.finishDoors = this.game.add.group();
@@ -188,6 +192,7 @@ TopDownGame.Game.prototype = {
          // this.createFromTiledObject(element, this.finishDoors);
         }, this);
     },
+    
 
     // Find objects such that containt a property called "type" equal to a certain value
     findObjectsByType: function(type, map, layer) {
@@ -197,6 +202,7 @@ TopDownGame.Game.prototype = {
                 // Phaser uses top left, Tiled bottom left
                 // Note: keep in mind the size of objects relative to tiles
                 element.y -= map.tileHeight;
+
                 result.push(element);
             }      
         });
@@ -218,8 +224,8 @@ TopDownGame.Game.prototype = {
         // Handle collision
         this.game.physics.arcade.collide(this.player, this.blockedLayer);  
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
-        this.game.physics.arcade.collide(this.enemies, this.toxicLayer);
-        this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
+        //this.game.physics.arcade.collide(this.enemies, this.toxicLayer);
+        //this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
         this.game.physics.arcade.overlap(this.player, this.enemies, this.PlayerEnemyOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, bullets, this.PlayerBulletOverlap, null, this);
@@ -270,8 +276,8 @@ TopDownGame.Game.prototype = {
                     if (bullet)
                     {
                         bullet.reset(alien.x, alien.y);
-                        bullet.body.velocity.x = 250; 
-                        bullet.scale.set(.025, .025);
+                        bullet.body.velocity.x = 400; 
+                        bullet.scale.set(.050, .050);
                     }
                     newshootAudio.play();
                 }
@@ -289,8 +295,8 @@ TopDownGame.Game.prototype = {
                      {
                          bullet.reset(alien.x, alien.y);
                          bullet.enableBody = true;
-                         bullet.body.velocity.x = -250;
-                         bullet.scale.set(0.025, 0.025);
+                         bullet.body.velocity.x = -400;
+                         bullet.scale.set(0.050, 0.050);
                      }
                     newshootAudio.play();
 
@@ -311,7 +317,7 @@ TopDownGame.Game.prototype = {
     PlayerFinished: function(player, door) {
         if(keys_collected == total_keys){
             console.log("move to next level!");
-            this.state.start("level2");
+            //DO SOMETHING!!!!
         }
     },
 
@@ -345,7 +351,7 @@ TopDownGame.Game.prototype = {
     },
 
 
-    PlayerToxicOverlap: function(mplayer, enemy){
+    /*PlayerToxicOverlap: function(mplayer, enemy){
     
         this.player.damage(1);
 
@@ -356,6 +362,7 @@ TopDownGame.Game.prototype = {
         shootAudio.play();
         
     },
+    */
    
     collect: function(player, collectable) {
         console.log('collected');
