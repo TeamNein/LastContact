@@ -25,6 +25,9 @@ TopDownGame.Title.prototype = {
         this.game.physics.arcade.enable(ship);
         ship.body.velocity.x = 50; 
         this.game.input.onTap.addOnce(this.start,this);
+
+        music = this.game.add.audio('music');
+        music.play();
     },
 
  	update: function() {
