@@ -93,17 +93,7 @@ TopDownGame.Game.prototype = {
     },
     
 
-    createKey: function() {
-        // Create keys the player can pick up
-        this.keys = this.game.add.group();
-        this.keys.enableBody = true;
-        var key;    
-        result = this.findObjectsByType('key', this.map, 'Objects');
-
-        result.forEach(function(element){
-          this.createFromTiledObject(element, this.keys);
-        }, this);
-    },
+    
 
     createAlien: function () {
 
@@ -125,6 +115,18 @@ TopDownGame.Game.prototype = {
             this.alien.startPosX = this.alien.x; 
             this.enemies.add(this.alien); 
         }
+    },
+
+    createKey: function() {
+        // Create keys the player can pick up
+        this.keys = this.game.add.group();
+        this.keys.enableBody = true;
+        var key;    
+        result = this.findObjectsByType('key', this.map, 'Objects');
+
+        result.forEach(function(element){
+          this.createFromTiledObject(element, this.keys);
+        }, this);
     },
     
     createStartDoors: function() {
