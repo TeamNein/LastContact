@@ -35,10 +35,30 @@ TopDownGame.Game.prototype = {
         this.createTilemap(0);
         this.createLevelObjects();
         this.createPlayer();
-
+        this.createText();
         // Move player with cursor keys
         this.cursors = this.game.input.keyboard.createCursorKeys();
        
+        
+        // Audio
+        shootAudio = this.game.add.audio('shootAudio'); 
+        dieAudio = this.game.add.audio ('dieAudio');
+        keyAudio = this.game.add.audio ('keyAudio'); 
+        newshootAudio = this.game.add.audio('lasershootAudio');
+        jumpAudio = this.game.add.audio('jumpAudio');
+        teamAudio = this.game.add.audio('teamAudio');
+    },
+
+    resetCounters: function(){
+         // Reset all counters 
+        keys_collected = 0;
+        team_found = 0;
+        total_keys = 0;
+        total_team = 0;
+    },
+
+    createText: function(){
+         // Create text to display player lives 
         text = this.game.add.text(650, 50, "LIVES: " + this.player.health);
         text.font = currFont;
         text.fill = "#00FF00";
@@ -57,27 +77,16 @@ TopDownGame.Game.prototype = {
         teamText.cameraOffset.setTo(50, 20); 
         teamText.fontSize = 20;
 
-        // Audio
-        shootAudio = this.game.add.audio('shootAudio'); 
-        dieAudio = this.game.add.audio ('dieAudio');
-        keyAudio = this.game.add.audio ('keyAudio'); 
-        newshootAudio = this.game.add.audio('lasershootAudio');
-        jumpAudio = this.game.add.audio('jumpAudio');
-        teamAudio = this.game.add.audio('teamAudio');
-    },
+        keyText = this.game.add.text(650, 80, "");
+        keyText.font = currFont;
+        keyText.fill = "#fac458";
+        // Specify position
+        keyText.fixedToCamera = true; 
+        keyText.cameraOffset.setTo(50, 50); 
+        keyText.fontSize = 20;
 
-    resetCounters: function(){
-         // Reset all counters 
-        keys_collected = 0;
-        team_found = 0;
-        total_keys = 0;
-        total_team = 0;
-    },
 
-    // createText: function(){
-    //     // Create text to display player lives 
-        
-    // },
+    },
 
     createBullets: function(){
         console.log('creating bullets');
@@ -402,6 +411,7 @@ TopDownGame.Game.prototype = {
         this.createTilemap(1);
         this.createLevelObjects();
         this.createPlayer();
+        this.createText();
         teamText.setText("TEAM: " + team_found + "/" + total_team);
 
     },
@@ -416,8 +426,9 @@ TopDownGame.Game.prototype = {
         this.blockedLayer.destroy();
         this.toxicLayer.destroy();
         this.keys.destroy(true, false);
-        //text.destroy();
-        //teamText.destroy();
+        text.destroy();
+        teamText.destroy();
+        keyText.destroy();
     },
 
 
@@ -475,13 +486,7 @@ TopDownGame.Game.prototype = {
         keyAudio.play(); 
         collectable.destroy();
         keys_collected++;
-        keyText = this.game.add.text(650, 80, "KEY FOUND!");
-        keyText.font = currFont;
-        keyText.fill = "#fac458";
-        // Specify position
-        keyText.fixedToCamera = true; 
-        keyText.cameraOffset.setTo(50, 50); 
-        keyText.fontSize = 20;
+        keyText.setText("KEY FOUND!");
 
     },
 
