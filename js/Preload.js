@@ -22,7 +22,7 @@ TopDownGame.Preload.prototype = {
         this.load.image('spacetiles', 'assets/images/tileset.png');
         this.load.image('key', 'assets/images/key.png');
         this.load.spritesheet('alien', 'assets/images/alien_sheet.png', 32, 60);
-        this.load.spritesheet('astronaut', 'assets/images/astro_sheet.png', 38, 60);
+        this.load.spritesheet('astronaut', 'assets/images/new_astro_sheet.png', 38, 60);
         this.load.image('Background', 'assets/images/starBGpixel.jpg');
         this.load.image('startdoor', 'assets/images/door.png');
         this.load.image('finishdoor', 'assets/images/doorend.png');

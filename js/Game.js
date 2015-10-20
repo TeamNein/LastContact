@@ -50,8 +50,14 @@ TopDownGame.Game.prototype = {
         this.player.scale.setTo(0.5, 0.5);
         // Set up player animations
         var spriteFPS = 5;
-        this.player.animations.add('left', [0, 1, 2], spriteFPS, true);
-        this.player.animations.add('right', [4, 5, 6], spriteFPS, true);
+        this.player.animations.add('left', [0, 1, 2, 3], spriteFPS, true);
+        this.player.animations.add('right', [6, 7, 8, 9], spriteFPS, true);
+        this.player.animations.add('still', [4, 5], 2, true);
+        this.player.animations.add('lefthurt', [0, 10, 2, 10], spriteFPS, true);
+        this.player.animations.add('righthurt', [6, 10, 8, 10], spriteFPS, true);
+        this.player.animations.add('stillhurt', [4, 10], spriteFPS, true);
+        // this.player.animations.add('left', [0, 1, 2], spriteFPS, true);
+        // this.player.animations.add('right', [4, 5, 6], spriteFPS, true);
         // Add player to the game
         this.game.physics.arcade.enable(this.player);
         //  Player physics properties
@@ -63,10 +69,8 @@ TopDownGame.Game.prototype = {
         // Makes the camera follow the player in the world
         this.game.camera.follow(this.player);
 
-
         // Move player with cursor keys
         this.cursors = this.game.input.keyboard.createCursorKeys();
-
 
         // Create bullets to for aliens to shoot
         bullets = this.game.add.group(); 
@@ -86,7 +90,6 @@ TopDownGame.Game.prototype = {
         bulletsreversed.setAll('checkWorldBounds', true);
         bulletsreversed.setAll('outOfBoundsKill', true);
 
-
         // Create text to display player lives 
         text = this.game.add.text(650, 50, "LIVES: " + this.player.health);
         text.font = currFont;
@@ -101,22 +104,6 @@ TopDownGame.Game.prototype = {
         keyAudio = this.game.add.audio ('keyAudio'); 
         newshootAudio = this.game.add.audio('lasershootAudio');
         jumpAudio = this.game.add.audio('jumpAudio');
-        
-
-
-    },
-    
-
-    createKey: function() {
-        // Create keys the player can pick up
-        this.keys = this.game.add.group();
-        this.keys.enableBody = true;
-        var key;
-        result = this.findObjectsByType('key', this.map, 'Objects');
-
-        result.forEach(function(element){
-          this.createFromTiledObject(element, this.keys);
-        }, this);
     },
 
     createAlien: function () {
@@ -226,7 +213,6 @@ TopDownGame.Game.prototype = {
         this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerBulletOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, this.finishDoors, this.PlayerFinished, null, this);
 
-
         this.player.body.velocity.x *= .1;
 
         if (this.cursors.left.isDown)
@@ -234,21 +220,30 @@ TopDownGame.Game.prototype = {
             // Move to the left
             this.player.body.velocity.x = -x_velocity;
 
-            this.player.animations.play('left');
+            if (this.player.invincible)
+                this.player.animations.play('lefthurt');
+            else
+                this.player.animations.play('left');
         }
         else if (this.cursors.right.isDown)
         {
             // Move to the right
             this.player.body.velocity.x = x_velocity;
 
-            this.player.animations.play('right');
+            if (this.player.invincible)
+                this.player.animations.play('righthurt');
+            else
+                this.player.animations.play('right');
         }
         else
         {
             // Stand still
-            this.player.animations.stop();
-
-            this.player.frame = 3;
+            //this.player.animations.stop();
+            //this.player.frame = 3;
+            if (this.player.invincible)
+                this.player.animations.play('stillhurt');
+            else
+                this.player.animations.play('still');
         }
 
         //  Allow the player to jump if they are touching the ground.
