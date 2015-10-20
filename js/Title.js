@@ -62,9 +62,10 @@ TopDownGame.Title.prototype = {
  	update: function() {
 
     },
-    
+
     start: function() {
         this.state.start('Game');
+        //this.state.start('Tutorial');
     }
 
 };

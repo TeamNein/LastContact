@@ -19,9 +19,9 @@ var team_found;
 var total_keys;
 var total_team;
 
-TopDownGame.Game = function(){};
+TopDownGame.Tutorial = function(){};
 
-TopDownGame.Game.prototype = {
+TopDownGame.Tutorial.prototype = {
     create: function() {
 
         // Reset all counters 
@@ -30,8 +30,8 @@ TopDownGame.Game.prototype = {
         total_keys = 0;
         total_team = 0;
 
-        this.map = this.game.add.tilemap('level1');
-        var sky = this.game.add.image(0, 0, 'Background');
+        this.map = this.game.add.tilemap('level0');
+        //var sky = this.game.add.image(0, 0, 'Background');
 
         this.map.addTilesetImage('tiles', 'spacetiles');
 
@@ -352,7 +352,7 @@ TopDownGame.Game.prototype = {
     PlayerFinished: function(player, door) {
         if(keys_collected == total_keys){
             console.log("move to next level!");
-            this.state.start("level2");
+            this.state.start("level1");
         }
     },
 
