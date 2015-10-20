@@ -15,6 +15,8 @@ TopDownGame.Preload.prototype = {
         this.load.image('spacetitle', 'assets/images/spaceTitle.jpg');
 
         // Tilemaps:
+        //     Tutorial:
+        this.load.tilemap('level0', 'assets/tilemaps/L0.json', null, Phaser.Tilemap.TILED_JSON);
         //     Level 1
         this.load.tilemap('level1', 'assets/tilemaps/L1.json', null, Phaser.Tilemap.TILED_JSON);
         //     Level 2
