@@ -6,7 +6,7 @@ var text;
 
 TopDownGame.Gameover.prototype = {
 
-	create: function( ) {
+	create: function() {
 		this.game.add.tileSprite(0, 0, 800, 400, "spacetitle"); 
         titleText = this.game.add.text(this.game.width / 2, 100, "GAME OVER!");
         titleText.anchor.setTo(0.5, 0.5);
@@ -20,19 +20,16 @@ TopDownGame.Gameover.prototype = {
         clickText.fill = fontColor;
         clickText.fontSize = clickSize; 
 
-		//text = this.game.add.text(100, 100, "GAME OVER! \n Click to play again");
-        //text.font = currFont;
-        //text.fill = "#00FF00";
-
         var cursors; 
     	this.cursors = this.game.input.keyboard.createCursorKeys();
     	this.game.input.onTap.addOnce(this.restart,this);
 
 	},
 
-	update: function ( ) {
+	update: function () {
 	
 	},
+    
 	restart: function() {
         this.state.start("Game");
     },
