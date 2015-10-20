@@ -89,7 +89,7 @@
     <property name="type" value="key"/>
    </properties>
   </object>
-  <object id="4" gid="77" x="25" y="1159" width="38" height="60">
+  <object id="4" gid="77" x="25" y="1158" width="38" height="60">
    <properties>
     <property name="type" value="playerStart"/>
    </properties>

@@ -47,7 +47,7 @@
                  "visible":true,
                  "width":38,
                  "x":25,
-                 "y":1159
+                 "y":1158
                 }, 
                 {
                  "gid":1073745129,
@@ -320,11 +320,35 @@
                  "visible":true,
                  "width":39,
                  "x":52.5,
-                 "y":909.5
+                 "y":851.5
                 }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
+         "width":0,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":0,
+         "name":"Object Layer 2",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
+         "width":0,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":0,
+         "name":"Object Layer 3",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
          "width":0,
          "x":0,
          "y":0
