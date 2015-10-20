@@ -143,6 +143,7 @@ TopDownGame.Game.prototype = {
             total_keys++;
           this.createFromTiledObject(element, this.keys);
         }, this);
+        console.log(total_keys);
     },
     
     createStartDoors: function() {
@@ -304,7 +305,7 @@ TopDownGame.Game.prototype = {
         this.player.invincible = !this.player.invincible; 
     },
     PlayerFinished: function(player, door) {
-        if(keys_collected == total_keys){
+        if(keys_collected > 0){
             console.log("move to next level!");
             this.state.start("level2");
         }
