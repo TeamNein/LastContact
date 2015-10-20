@@ -391,8 +391,8 @@ TopDownGame.Game.prototype = {
     },
 
     PlayerFinished: function(player, door) {
-        console.log(keys_collected + " and " + total_keys);
-        if((keys_collected > 0 && total_keys > 0) || current_level == 0){
+       // console.log(keys_collected + " and " + total_keys);
+        if(keys_collected > 0){
             console.log("move to next level!");
             current_level++;
             total_found_teammates += total_team;

@@ -17,7 +17,7 @@ TopDownGame.EndGame.prototype = {
 
         var numTeammates = localStorage.getItem('teammates');
 
-        titleText = this.game.add.text(this.game.width / 2, 300, "You Found " + numTeammates +  " !");
+        titleText = this.game.add.text(this.game.width / 2, 300, "You Found " + numTeammates +  " of Your Teammates!");
         titleText.anchor.setTo(0.5, 0.5);
         titleText.font = currFont;
         titleText.fill = fontColor;
