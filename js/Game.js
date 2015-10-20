@@ -1,93 +1,182 @@
 var TopDownGame = TopDownGame || {};
 
-// Title screen
+var TOTAL_LEVELS = 2;
+
+// Update text for player lives and teammates 
+var text;
+var teamText;
+var keyText;
+
+// Invincibility
+var player_invincible_time = 2;
+var player_is_invincible = false;
+
+var current_level = 0;
+var jump_velocity = 350;
+var x_velocity = 150;
+var shootAudio; 
+var dieAudio; 
+var keyAudio; 
+var keys_collected;
+var team_found;
+var total_keys;
+var total_team;
+var total_found_teammates = 0;
+var level_names = ["level0", "level1"];
+
 TopDownGame.Game = function(){};
 
 TopDownGame.Game.prototype = {
     create: function() {
 
-        this.map = this.game.add.tilemap('level1-5');
         var sky = this.game.add.image(0, 0, 'Background');
 
-        // Arguments: tileset name as specified in Tiled
-        //            key to the asset
-        this.map.addTilesetImage('tiles', 'spacetiles');
+        this.resetCounters();
+        this.createTilemap(0);
+        this.createLevelObjects();
+        this.createPlayer();
 
-        // Create layer
-        this.blockedLayer = this.map.createLayer('TileLayer');
+        // Move player with cursor keys
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+       
+        text = this.game.add.text(650, 50, "LIVES: " + this.player.health);
+        text.font = currFont;
+        text.fill = "#00FF00";
 
-        //collision on blockedLayer
-        this.map.setCollisionBetween(0, 2000, true, 'TileLayer');
+        // Specify position
+        text.fixedToCamera = true; 
+        text.cameraOffset.setTo(650, 20); 
+        text.fontSize = 20;
 
-        // Resize the game world to match the layer dimensions
-        this.blockedLayer.resizeWorld();
+        // Create text to display teammate count
+        teamText = this.game.add.text(650, 50, "TEAM: " + team_found + "/" + total_team);
+        teamText.font = currFont;
+        teamText.fill = "#f1940f"; 
+        // Specify position
+        teamText.fixedToCamera = true; 
+        teamText.cameraOffset.setTo(50, 20); 
+        teamText.fontSize = 20;
 
-        this.createKey();
- 
-        this.createAlien();
+        // Audio
+        shootAudio = this.game.add.audio('shootAudio'); 
+        dieAudio = this.game.add.audio ('dieAudio');
+        keyAudio = this.game.add.audio ('keyAudio'); 
+        newshootAudio = this.game.add.audio('lasershootAudio');
+        jumpAudio = this.game.add.audio('jumpAudio');
+        teamAudio = this.game.add.audio('teamAudio');
+    },
 
-        // this.createDoors();    
+    resetCounters: function(){
+         // Reset all counters 
+        keys_collected = 0;
+        team_found = 0;
+        total_keys = 0;
+        total_team = 0;
+    },
 
+    // createText: function(){
+    //     // Create text to display player lives 
+        
+    // },
+
+    createBullets: function(){
+        console.log('creating bullets');
+        // Create bullets to for aliens to shoot
+        bullets = this.game.add.group(); 
+        bullets.enableBody = true; 
+        this.game.physics.enable(bullets, Phaser.Physics.ARCADE); 
+        bullets.createMultiple(40, 'bullet');
+        // Make bullets recyclable 
+        bullets.setAll('checkWorldBounds', true);
+        bullets.setAll('outOfBoundsKill', true);
+
+        // Create bullets to shoot in the opposite direction
+        bulletsreversed = this.game.add.group(); 
+        bulletsreversed.enableBody = true; 
+        this.game.physics.enable(bulletsreversed, Phaser.Physics.ARCADE); 
+        // Make them recyclable as well
+        bulletsreversed.createMultiple(40, 'bulletreversed');
+        bulletsreversed.setAll('checkWorldBounds', true);
+        bulletsreversed.setAll('outOfBoundsKill', true);
+        console.log(bullets.getFirstExists());
+    },
+
+    createPlayer: function(){
         // Create player
         var result = this.findObjectsByType('playerStart', this.map, 'Objects')
         this.player = this.game.add.sprite(result[0].x, result[0].y, 'astronaut');
         this.player.scale.setTo(0.5, 0.5);
-
-
+        // Set up player animations
         var spriteFPS = 5;
-        this.player.animations.add('left', [0, 1, 2], spriteFPS, true);
-        this.player.animations.add('right', [4, 5, 6], spriteFPS, true);
+        this.player.animations.add('left', [0, 1, 2, 3], spriteFPS, true);
+        this.player.animations.add('right', [6, 7, 8, 9], spriteFPS, true);
+        this.player.animations.add('still', [4, 5], 2, true);
+        this.player.animations.add('lefthurt', [0, 10, 2, 10], spriteFPS, true);
+        this.player.animations.add('righthurt', [6, 10, 8, 10], spriteFPS, true);
+        this.player.animations.add('stillhurt', [4, 10], spriteFPS, true);
 
+        // Add player to the game
         this.game.physics.arcade.enable(this.player);
-
         //  Player physics properties
         this.player.body.bounce.y = 0;
         this.player.body.gravity.y = 500;
         this.player.body.collideWorldBounds = true;
-
-        //this.player.hits = 0; 
-
-        //give the player 5 lives, lost when hit alien/bullet
+        // Give the player 5 lives, lost on contact with alien/bullet
         this.player.health = 5; 
-        //this.player.alive = true; 
 
         // Makes the camera follow the player in the world
         this.game.camera.follow(this.player);
+    },
+    createTilemap: function(index){
+        this.map = this.game.add.tilemap(level_names[index]);
+        this.map.addTilesetImage('tiles', 'spacetiles');
 
-        // Move player with cursor keys
-        this.cursors = this.game.input.keyboard.createCursorKeys();
+          // Create layers
+        this.blockedLayer = this.map.createLayer('TileLayer');
+        this.toxicLayer = this.map.createLayer('ToxicLiquidLayer');
 
-        //create bullets to shoot
-        bullets = this.game.add.group(); 
-        bullets.enableBody = true; 
-        //bullets.physicsBodyType = Phaser.Physics.ARCADE; 
+        // Collision on blockedLayer
+        this.map.setCollisionBetween(0, 2000, true, 'TileLayer');
+        this.map.setCollisionBetween(400, 405, true, 'ToxicLiquidLayer');
 
-        this.game.physics.enable(bullets, Phaser.Physics.ARCADE); 
-
-        bullets.createMultiple(40, 'bullet');
-        bullets.setAll('checkWorldBounds', true);
-        bullets.setAll('outOfBoundsKill', true);
-
-        var text = this.game.add.text(650, 50, "lives left: " + this.player.health);
-        text.font = 'Revalia';
-        text.fill = "#00FF00";
-        text.fixedToCamera = true; 
-        text.cameraOffset.setTo(650, 50); 
-        text.fontSize = 20;
+        // Resize the game world to match the layer dimensions
+        this.blockedLayer.resizeWorld();
 
     },
-    
+    createLevelObjects: function(){
+        this.createKey();
+        this.createAlien();
+        this.createFriend();
 
-    createKey: function() {
-        // Create keys the player can pick up
-        this.keys = this.game.add.group();
-        this.keys.enableBody = true;
-        var key;    
-        result = this.findObjectsByType('key', this.map, 'Objects');
+        this.createStartDoors();
+        this.createFinishDoors();
+        this.createBullets();
+        //this.createText();
 
-        result.forEach(function(element){
-          this.createFromTiledObject(element, this.keys);
-        }, this);
+    },
+
+    createFriend: function () {
+
+        this.friends = this.game.add.group();
+
+        var result = this.findObjectsByType('friend', this.map, 'Objects');
+
+        var index;
+        for (index = 0; index < result.length; index++) {
+            this.friend = this.game.add.sprite(result[index].x, result[index].y, 'friend');
+            var spriteFPS = 2; 
+            this.friend.animations.add('still', [0, 1], spriteFPS, true);
+            this.friend.scale.setTo(0.5, 0.5);
+            this.friend.enableBody = true;
+            this.game.physics.arcade.enable(this.friend);
+            this.friend.body.collideWorldBounds = true;
+            this.game.physics.arcade.collide(this.friend, this.blockedLayer);
+            this.friend.body.gravity.y = 25;
+            this.friend.anchor.setTo(0.5, 0.5);
+            this.friends.add(this.friend);
+            total_team++;
+        }
+
     },
 
     createAlien: function () {
@@ -100,26 +189,60 @@ TopDownGame.Game.prototype = {
         var index; 
         for(index = 0; index < result.length; index++){
             this.alien = this.game.add.sprite(result[index].x, result[index].y, 'alien');
-            this.alien.scale.setTo(.075, .075);
+            var spriteFPS = 5; 
+            this.alien.animations.add('left', [0, 1, 2, 3], spriteFPS, true);
+            this.alien.animations.add('right', [5, 6, 7, 8], spriteFPS, true);
+            this.alien.scale.setTo(0.7, 0.7);
             this.alien.enableBody = true; 
             this.game.physics.arcade.enable(this.alien);
             this.alien.body.collideWorldBounds = true;
             this.game.physics.arcade.collide(this.alien, this.blockedLayer);
-            this.alien.body.gravity.y = 25;
+            this.alien.body.gravity.y = 250;
             this.alien.body.velocity.x = 10; 
             this.alien.startPosX = this.alien.x; 
-            this.enemies.add(this.alien); 
+            this.alien.anchor.setTo(0.5, 0.5);
+            this.enemies.add(this.alien);
         }
     },
-    
-    createDoors: function() {
-        //create doors
-        this.doors = this.game.add.group();
-        this.doors.enableBody = true;
 
-        result = this.findObjectsByType('door', this.map, 'Objects');
+    createKey: function () {
+        // Create keys the player can pick up
+        this.keys = this.game.add.group();
+        this.keys.enableBody = true;
+        var key;    
+        result = this.findObjectsByType('key', this.map, 'Objects');
+
         result.forEach(function(element){
-          this.createFromTiledObject(element, this.doors);
+            total_keys++;
+          this.createFromTiledObject(element, this.keys);
+        }, this);
+        console.log(total_keys);
+    },
+    
+    createStartDoors: function () {
+        this.startDoors = this.game.add.group();
+        this.startDoors.enableBody = true;
+        var startdoor; 
+        result = this.findObjectsByType('startdoor', this.map, 'Objects');
+
+        result.forEach(function(element){
+            console.log(element.x + " and " + element.y);
+            this.startdoor = this.game.add.sprite(element.x, element.y, 'startdoor');
+            this.startdoor.anchor.setTo(.5, .5);
+            this.startdoor.scale.setTo(0.12, 0.12);
+            this.startDoors.add(this.startdoor);
+        }, this);
+    },
+    createFinishDoors: function () {
+        this.finishDoors = this.game.add.group();
+        this.finishDoors.enableBody = true;
+        var finishdoor;
+        result = this.findObjectsByType('finishdoor', this.map, 'Objects');
+        result.forEach(function(element){
+            this.finishdoor = this.game.add.sprite(element.x, element.y, 'finishdoor');
+            this.finishdoor.anchor.setTo(.5, .5);
+            this.finishdoor.scale.setTo(0.12, 0.12);
+            this.finishDoors.add(this.finishdoor);
         }, this);
     },
 
@@ -140,112 +263,229 @@ TopDownGame.Game.prototype = {
     // Create a sprite from an object
     createFromTiledObject: function(element, group) {
         var sprite = group.create(element.x, element.y, element.properties.sprite);
-
         // Copy all properties to the sprite
+
         Object.keys(element.properties).forEach(function(key){
             sprite[key] = element.properties[key];
         });
     },
 
-    update: function() {
-        // Handle collision
-        this.game.physics.arcade.collide(this.player, this.blockedLayer);  
+    update: function () {
+        // Collide every sprite with the blocks
+        this.game.physics.arcade.collide(this.player, this.blockedLayer);
+        this.game.physics.arcade.collide(this.friends, this.blockedLayer);
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
 
-        this.player.body.velocity.x = 0;
+        // Let enemies walk on the toxic waste
+        this.game.physics.arcade.collide(this.enemies, this.toxicLayer);
+        // Don't let player sink in toxic waste, but punish for colliding with it
+        this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
+
+        // Handle player interaction with other object and block types
+        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
+        this.game.physics.arcade.overlap(this.player, this.friends, this.PlayerFriendOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, this.enemies, this.PlayerEnemyOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bullets, this.PlayerBulletOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, bulletsreversed, this.PlayerBulletOverlap, null, this);
+        this.game.physics.arcade.overlap(this.player, this.finishDoors, this.PlayerFinished, null, this);
+
+        this.player.body.velocity.x *= .1;
 
         if (this.cursors.left.isDown)
         {
             // Move to the left
-            this.player.body.velocity.x = -150;
+            this.player.body.velocity.x = -x_velocity;
 
-            this.player.animations.play('left');
+            if (this.player.invincible)
+                this.player.animations.play('lefthurt');
+            else
+                this.player.animations.play('left');
         }
         else if (this.cursors.right.isDown)
         {
             // Move to the right
-            this.player.body.velocity.x = 150;
+            this.player.body.velocity.x = x_velocity;
 
-            this.player.animations.play('right');
+            if (this.player.invincible)
+                this.player.animations.play('righthurt');
+            else
+                this.player.animations.play('right');
         }
         else
         {
             // Stand still
-            this.player.animations.stop();
-
-            this.player.frame = 3;
+            if (this.player.invincible)
+                this.player.animations.play('stillhurt');
+            else
+                this.player.animations.play('still');
         }
 
         //  Allow the player to jump if they are touching the ground.
         if (this.cursors.up.isDown && this.player.body.blocked.down)
         {
-            this.player.body.velocity.y = -350;
+            this.player.body.velocity.y = -jump_velocity;
+            jumpAudio.play();
         }
 
-        // arcade.collide for barrier Object 
-        this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
-        // this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
+        this.friends.forEach(function(friend){
+            friend.animations.play('still');
+        }); 
 
+        this.enemies.forEach(function(alien){      
 
-        this.enemies.forEach(function(alien){        
-             if((alien.body.velocity.x > 0 && alien.x > alien.startPosX + 20) || 
+             if (alien.body.velocity.x > 0) {
 
-                (alien.body.velocity.x < 0 && alien.x < alien.startPosX - 20)) {
-
+                if (alien.x > alien.startPosX + 20) {
                     alien.body.velocity.x *= -1; 
+                    var bullet = this.bullets.getFirstExists(false);
 
-                    var bullet = bullets.getFirstExists(false);
 
                     if (bullet)
                     {
                         bullet.reset(alien.x, alien.y);
-                        bullet.enableBody = true; 
-                        //multiply by sign of alien x velcity to send in correct direction 
-                        bullet.body.velocity.x = (alien.body.velocity.x/alien.body.velocity.x) * 250; 
-                        bullet.scale.set(.05, .05);
+                        bullet.body.velocity.x = 250; 
+                        bullet.scale.set(.025, .025);
                     }
+                    newshootAudio.play();
+                }
+                alien.animations.play('right');
 
-                } 
-        }); 
 
-        //could change to colllide instead of overlap         
-        if(this.game.physics.arcade.overlap(this.player, this.enemies, null, null, this.game)) {
-            this.player.damage(1);   
-            //move it backwards so it doesn't get hit again... this sort of sucks
-            //this.player.x = 0;
-            //this.player.y = 1000;  
+             } else if (alien.body.velocity.x < 0) {
 
-            this.player.body.velocity.y = -350;  
-            //for dubugging
-            console.log('Alien hit! You have ' + this.player.health + ' lives left'); 
+                 if (alien.x < alien.startPosX - 20) {
+                     alien.body.velocity.x *= -1;
+                     var bullet = this.bulletsreversed.getFirstExists(false);
+
+                     if (bullet)
+                     {
+                         bullet.reset(alien.x, alien.y);
+                         bullet.enableBody = true;
+                         bullet.body.velocity.x = -250;
+                         bullet.scale.set(0.025, 0.025);
+                     }
+                    newshootAudio.play();
+
+                 }
+                alien.animations.play('left');
+             }
+        });
+
+        if (this.player.health == 0 ) {
+            dieAudio.play(); 
+            this.state.start("Gameover");
         }
+    },
 
+    toggleInvincible: function (mplayer) {
+        this.player.invincible = !this.player.invincible; 
+    },
 
-        if (this.game.physics.arcade.collide(this.player, bullets, null, null, this.game)) {
-            this.player.damage(1);
-            //this.player.x = 0; 
-            //this.player.y = 1050; 
-             this.player.body.velocity.y = -350; 
-            //for debugging
-            //bullets.remove();
-            console.log('Bullet hit! You have '  + this.player.health + ' lives left' );
+    PlayerFinished: function(player, door) {
+        console.log(keys_collected + " and " + total_keys);
+        if((keys_collected > 0 && total_keys > 0) || current_level == 0){
+            console.log("move to next level!");
+            current_level++;
+            total_found_teammates += total_team;
+            localStorage.setItem('teammates', total_found_teammates);
+
+            if(current_level == TOTAL_LEVELS)
+                this.state.start("EndGame");
+            else
+                this.LoadLevel(current_level);
+            //this.state.start("level2");
         }
+    },
+    LoadLevel: function(index){
+        this.DestroyAllObjects();
+        this.resetCounters();
+        this.createTilemap(1);
+        this.createLevelObjects();
+        this.createPlayer();
+        teamText.setText("TEAM: " + team_found + "/" + total_team);
 
     },
 
+    DestroyAllObjects: function(){
+        this.player.destroy();
+        this.enemies.destroy(true, false);
+        bullets.destroy(true, false);
+        bulletsreversed.destroy(true, false);
+        this.startDoors.destroy(true, false);
+        this.finishDoors.destroy(true, false);
+        this.blockedLayer.destroy();
+        this.toxicLayer.destroy();
+        this.keys.destroy(true, false);
+        //text.destroy();
+        //teamText.destroy();
+    },
+
+
+    PlayerFriendOverlap: function(mplayer, friend){
+        teamAudio.play();
+        friend.destroy();
+        team_found++;
+        teamText.setText("TEAM: " + team_found + "/" + total_team);
+    },
+
+    PlayerEnemyOverlap: function(mplayer, enemy){
+         if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(1000 * player_invincible_time, this.toggleInvincible, this); 
+            
+
+                mplayer.body.velocity.y = -jump_velocity; 
+             
+                console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+                text.setText("LIVES: " + mplayer.health); 
+                shootAudio.play(); 
+        }
+    },
+
+    PlayerBulletOverlap: function(mplayer, bullet){
+         if(!this.player.invincible) {
+                this.player.damage(1);   
+                this.toggleInvincible(this.player); 
+                this.game.time.events.add(1000 * player_invincible_time, this.toggleInvincible, this); 
+                bullet.kill();
+             
+                console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+                text.setText("LIVES: " + mplayer.health); 
+               
+                shootAudio.play(); 
+        }
+    },
+
+
+    PlayerToxicOverlap: function(mplayer, enemy){
+        this.player.damage(1);
+
+        mplayer.body.velocity.y = -jump_velocity; 
+     
+        console.log('Bullet hit! You have '  + mplayer.health + ' lives left' );
+        text.setText("LIVES: " + mplayer.health); 
+        shootAudio.play();
+        
+    },
+   
     collect: function(player, collectable) {
         console.log('collected');
         // Remove sprite
+        keyAudio.play(); 
         collectable.destroy();
+        keys_collected++;
+        keyText = this.game.add.text(650, 80, "KEY FOUND!");
+        keyText.font = currFont;
+        keyText.fill = "#fac458";
+        // Specify position
+        keyText.fixedToCamera = true; 
+        keyText.cameraOffset.setTo(50, 50); 
+        keyText.fontSize = 20;
+
     },
+
     enterDoor: function(player, door) {
         console.log('entering door that will take you to '+door.targetTilemap+' on x:'+door.targetX+' and y:'+door.targetY);
     },
-  
-
 };    
-
-
-
-
-
