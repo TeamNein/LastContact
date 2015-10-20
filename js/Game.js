@@ -40,6 +40,7 @@ TopDownGame.Game.prototype = {
 
         this.createKey();
         this.createAlien();
+        this.createFriend();
 
         this.createStartDoors();
         this.createFinishDoors();
@@ -106,6 +107,29 @@ TopDownGame.Game.prototype = {
         jumpAudio = this.game.add.audio('jumpAudio');
     },
 
+    createFriend: function () {
+
+        this.friends = this.game.add.group();
+
+        var result = this.findObjectsByType('friend', this.map, 'Objects');
+
+        var index;
+        for (index = 0; index < result.length; index++) {
+            this.friend = this.game.add.sprite(result[index].x, result[index].y, 'friend');
+            var spriteFPS = 2; 
+            this.friend.animations.add('still', [0, 1], spriteFPS, true);
+            this.friend.scale.setTo(0.5, 0.5);
+            this.friend.enableBody = true;
+            this.game.physics.arcade.enable(this.friend);
+            this.friend.body.collideWorldBounds = true;
+            this.game.physics.arcade.collide(this.friend, this.blockedLayer);
+            this.friend.body.gravity.y = 25;
+            this.friend.body.velocity.x = 0;
+            this.friend.anchor.setTo(0.5, 0.5);
+            this.friends.add(this.friend);
+        }
+    },
+
     createAlien: function () {
 
         this.enemies = this.game.add.group();
@@ -124,7 +148,7 @@ TopDownGame.Game.prototype = {
             this.game.physics.arcade.enable(this.alien);
             this.alien.body.collideWorldBounds = true;
             this.game.physics.arcade.collide(this.alien, this.blockedLayer);
-            this.alien.body.gravity.y = 25;
+            this.alien.body.gravity.y = 250;
             this.alien.body.velocity.x = 10; 
             this.alien.startPosX = this.alien.x; 
             this.alien.anchor.setTo(0.5, 0.5);
@@ -205,6 +229,8 @@ TopDownGame.Game.prototype = {
         // Handle collision
         this.game.physics.arcade.collide(this.player, this.blockedLayer);  
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
+        this.game.physics.arcade.collide(this.friends, this.blockedLayer);
+
         this.game.physics.arcade.collide(this.enemies, this.toxicLayer);
         this.game.physics.arcade.collide(this.player, this.toxicLayer, this.PlayerToxicOverlap, null, this);
         this.game.physics.arcade.overlap(this.player, this.keys, this.collect, null, this);
@@ -253,10 +279,14 @@ TopDownGame.Game.prototype = {
             jumpAudio.play();
         }
 
+        this.friends.forEach(function(friend){
+            friend.animations.play('still');
+        }); 
+
         this.enemies.forEach(function(alien){      
 
              if (alien.body.velocity.x > 0) {
-                //alien.animations.play('right');
+
                 if (alien.x > alien.startPosX + 20) {
                     alien.body.velocity.x *= -1; 
                     var bullet = bullets.getFirstExists(false);
@@ -274,7 +304,6 @@ TopDownGame.Game.prototype = {
 
 
              } else if (alien.body.velocity.x < 0) {
-                //alien.animations.play('left');
 
                  if (alien.x < alien.startPosX - 20) {
                      alien.body.velocity.x *= -1;
@@ -303,6 +332,7 @@ TopDownGame.Game.prototype = {
     toggleInvincible: function (mplayer) {
         this.player.invincible = !this.player.invincible; 
     },
+
     PlayerFinished: function(player, door) {
         if(keys_collected == total_keys){
             console.log("move to next level!");

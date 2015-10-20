@@ -14,8 +14,12 @@ TopDownGame.Preload.prototype = {
         this.load.image('ship', 'assets/images/ship2.png');
         this.load.image('spacetitle', 'assets/images/spaceTitle.jpg');
 
-        //load game assets
-        this.load.tilemap('level1', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
+        // Tilemaps:
+        // Level 1
+        this.load.tilemap('level1', 'assets/tilemaps/L1.json', null, Phaser.Tilemap.TILED_JSON);
+        //this.load.tilemap('level1', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
+
+        // Level 2
         this.load.tilemap('level2', 'assets/tilemaps/level2-map2.json', null, Phaser.Tilemap.TILED_JSON);
 
 
@@ -23,6 +27,7 @@ TopDownGame.Preload.prototype = {
         this.load.image('key', 'assets/images/key.png');
         this.load.spritesheet('alien', 'assets/images/alien_sheet.png', 32, 60);
         this.load.spritesheet('astronaut', 'assets/images/new_astro_sheet.png', 38, 60);
+        this.load.spritesheet('friend', 'assets/images/team_sheet.png', 38, 60);
         this.load.image('Background', 'assets/images/starBGpixel.jpg');
         this.load.image('startdoor', 'assets/images/door.png');
         this.load.image('finishdoor', 'assets/images/doorend.png');
