@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-up" width="120" height="75" tilewidth="16" tileheight="16" nextobjectid="32">
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="120" height="75" tilewidth="16" tileheight="16" nextobjectid="34">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="4000">
   <image source="tilesets/tileset.png" width="800" height="1280"/>
  </tileset>
@@ -110,7 +110,7 @@
     <property name="type" value="alien"/>
    </properties>
   </object>
-  <object id="11" gid="3305" x="557" y="941" width="16" height="16">
+  <object id="11" gid="3305" x="553" y="998" width="16" height="16">
    <properties>
     <property name="type" value="alien"/>
    </properties>
@@ -120,7 +120,7 @@
     <property name="type" value="alien"/>
    </properties>
   </object>
-  <object id="13" gid="3305" x="303" y="1062" width="16" height="16">
+  <object id="13" gid="3305" x="301" y="1100" width="16" height="16">
    <properties>
     <property name="type" value="alien"/>
    </properties>
@@ -145,7 +145,7 @@
     <property name="type" value="finishdoor"/>
    </properties>
   </object>
-  <object id="22" gid="681" x="63" y="141" width="16" height="16">
+  <object id="22" gid="681" x="79" y="138" width="33" height="61">
    <properties>
     <property name="type" value="friend"/>
    </properties>
@@ -155,9 +155,31 @@
     <property name="type" value="startdoor"/>
    </properties>
   </object>
-  <object id="27" gid="3305" x="1446" y="730" width="16" height="16"/>
-  <object id="28" gid="3305" x="945" y="742" width="16" height="16"/>
-  <object id="29" gid="3305" x="162" y="712" width="16" height="16"/>
+  <object id="27" gid="3305" x="1741" y="284" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="28" gid="3305" x="1169" y="675" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="29" gid="3305" x="293" y="691" width="16" height="16">
+   <properties>
+    <property name="type" value="alien"/>
+   </properties>
+  </object>
+  <object id="32" gid="681" x="518" y="451" width="39" height="61">
+   <properties>
+    <property name="type" value="friend"/>
+   </properties>
+  </object>
+  <object id="33" gid="681" x="52.5" y="851.5" width="39" height="61">
+   <properties>
+    <property name="type" value="friend"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="Object Layer 2" visible="0"/>
  <objectgroup name="Object Layer 3" visible="0"/>
