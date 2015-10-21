@@ -12,7 +12,7 @@ TopDownGame.Preload.prototype = {
 
         // For title screen
         this.load.image('ship', 'assets/images/ship2.png');
-        this.load.image('spacetitle', 'assets/images/spaceTitle.jpg');
+        this.load.image('spacetitle', 'assets/images/spacetitle.jpg');
 
         // Tilemaps:
         //     Tutorial:
