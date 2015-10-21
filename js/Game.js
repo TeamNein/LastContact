@@ -395,7 +395,7 @@ TopDownGame.Game.prototype = {
         if(keys_collected > 0){
             console.log("move to next level!");
             current_level++;
-            total_found_teammates += total_team;
+            total_found_teammates += team_found;
             localStorage.setItem('teammates', total_found_teammates);
 
             if(current_level == TOTAL_LEVELS)
