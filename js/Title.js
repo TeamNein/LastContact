@@ -40,7 +40,13 @@ TopDownGame.Title.prototype = {
         titleText.fill = fontColor;
         titleText.fontSize = titleSize; 
 
-        clickText = this.game.add.text(this.game.width / 2, 330, "Click to start");
+        clickText = this.game.add.text(this.game.width / 2, 290, "Click to Start");
+        clickText.anchor.setTo(0.5, 0.5);
+        clickText.font = currFont;
+        clickText.fill = fontColor;
+        clickText.fontSize = clickSize;
+
+        clickText = this.game.add.text(this.game.width / 2, 330, "Press R for New Game");
         clickText.anchor.setTo(0.5, 0.5);
         clickText.font = currFont;
         clickText.fill = fontColor;
@@ -52,6 +58,9 @@ TopDownGame.Title.prototype = {
         ship.scale.setTo(.5, .5);
         this.game.physics.arcade.enable(ship);
         ship.body.velocity.x = 50; 
+
+        key1 = this.game.input.keyboard.addKey(Phaser.Keyboard.R);
+        key1.onDown.add(this.resetGame, this);
 
         this.game.input.onTap.addOnce(this.start,this);
 
@@ -66,6 +75,10 @@ TopDownGame.Title.prototype = {
     start: function() {
         this.state.start('Game');
         //this.state.start('Tutorial');
+    },
+
+    resetGame : function() {
+        localStorage.setItem("current_level", 0);
     }
 
 };
