@@ -30,16 +30,16 @@ TopDownGame.Game.prototype = {
     create: function() {
 
         var sky = this.game.add.image(0, 0, 'Background');
+        var clvl = localStorage.getItem("current_level");
 
         this.resetCounters();
-        this.createTilemap(0);
+        this.createTilemap(clvl);
         this.createLevelObjects();
         this.createPlayer();
         this.createText();
         // Move player with cursor keys
         this.cursors = this.game.input.keyboard.createCursorKeys();
        
-        
         // Audio
         shootAudio = this.game.add.audio('shootAudio'); 
         dieAudio = this.game.add.audio ('dieAudio');
@@ -383,6 +383,7 @@ TopDownGame.Game.prototype = {
         if (this.player.health == 0 ) {
             dieAudio.play(); 
             this.state.start("Gameover");
+            localStorage.setItem("current_level", current_level);
         }
     },
 
@@ -397,6 +398,7 @@ TopDownGame.Game.prototype = {
             current_level++;
             total_found_teammates += team_found;
             localStorage.setItem('teammates', total_found_teammates);
+            localStorage.setItem('current_level', current_level);
 
             if(current_level == TOTAL_LEVELS)
                 this.state.start("EndGame");
@@ -408,7 +410,7 @@ TopDownGame.Game.prototype = {
     LoadLevel: function(index){
         this.DestroyAllObjects();
         this.resetCounters();
-        this.createTilemap(1);
+        this.createTilemap(localStorage.getItem("current_level"));
         this.createLevelObjects();
         this.createPlayer();
         this.createText();
